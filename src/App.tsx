@@ -1,13 +1,14 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Navbar, MainTabType } from './components/Navbar';
-import { AdminDashboard } from './components/AdminDashboard';
-import { CasesListView } from './components/CasesListView';
-import { Softphone } from './components/Softphone';
-import { RetainerSigningModal } from './components/RetainerSigningModal';
-import { NewCaseModal } from './components/NewCaseModal';
-import { AIAgentControlModal } from './components/AIAgentControlModal';
-import { LegalCase, Stats } from './types';
-import { X } from 'lucide-react';
+﻿import React, { useState, useEffect } from "react";
+import { Navbar, MainTabType } from "./components/Navbar";
+import { AdminDashboard } from "./components/AdminDashboard";
+import { CasesListView } from "./components/CasesListView";
+import { OmnichannelInboxView } from "./components/OmnichannelInboxView";
+import { Softphone } from "./components/Softphone";
+import { RetainerSigningModal } from "./components/RetainerSigningModal";
+import { NewCaseModal } from "./components/NewCaseModal";
+import { AIAgentControlModal } from "./components/AIAgentControlModal";
+import { LegalCase, Stats } from "./types";
+import { X, LayoutDashboard, FolderKanban, MessageSquare, PhoneCall } from "lucide-react";
 
 const initialMockCases: LegalCase[] = [
   {
@@ -20,9 +21,9 @@ const initialMockCases: LegalCase[] = [
     state: "CA",
     employer: "Amazon Logistics Warehouse (San Bernardino)",
     injuryDate: "2026-08-14",
-    reportedToBoss: true,
-    receivedMedicalCare: false,
-    hasAttorney: false,
+    reportedToBoss: true;
+    receivedMedicalCare: false;
+    hasAttorney: false;
     injuryDetails: "Lesión lumbar severa (L4-L5) levantando tarima de 65 lbs en turno nocturno. Supervisor negó reporte de accidente DWC-1.",
     estimatedCaseValue: "$65,000",
     status: "FIRMA_COMPLETADA",
@@ -53,9 +54,9 @@ const initialMockCases: LegalCase[] = [
     state: "CA",
     employer: "Freelance / Rideshare Driver",
     injuryDate: "2026-08-22",
-    reportedToBoss: true,
-    receivedMedicalCare: true,
-    hasAttorney: false,
+    reportedToBoss: true;
+    receivedMedicalCare: true;
+    hasAttorney: false;
     injuryDetails: "Choque en T (T-Bone collision) en intersección en Los Angeles. Esguince cervical y fractura de muñeca.",
     estimatedCaseValue: "$120,000",
     status: "FIRMA_COMPLETADA",
@@ -86,9 +87,9 @@ const initialMockCases: LegalCase[] = [
     state: "CA",
     employer: "Fresh Produce Packaging Inc. (Vernon, CA)",
     injuryDate: "2026-08-28",
-    reportedToBoss: true,
-    receivedMedicalCare: false,
-    hasAttorney: false,
+    reportedToBoss: true;
+    receivedMedicalCare: false;
+    hasAttorney: false;
     injuryDetails: "Atrapamiento de mano derecha en banda transportadora de empaque. Laceración profunda y trauma articular.",
     estimatedCaseValue: "$85,000",
     status: "CALIFICADO_PARA_CLOSER",
@@ -110,9 +111,9 @@ const initialMockCases: LegalCase[] = [
     state: "CA",
     employer: "FedEx Ground Distribution (Fontana)",
     injuryDate: "2026-08-29",
-    reportedToBoss: true,
-    receivedMedicalCare: true,
-    hasAttorney: false,
+    reportedToBoss: true;
+    receivedMedicalCare: true;
+    hasAttorney: false;
     injuryDetails: "Caída desde plataforma de carga (altura 4 pies). Lesión en menisco de rodilla izquierda.",
     estimatedCaseValue: "$55,000",
     status: "CONTRATO_ENVIADO",
@@ -144,23 +145,19 @@ export function App() {
     conversionRate: "25.0%"
   });
 
-  // THE 2 MAIN TABS: 'METRICS' (default) or 'CASES'
-  const [currentTab, setCurrentTab] = useState<MainTabType>('METRICS');
-  
-  // Modals & Softphone Shortcut
+  const [currentTab, setCurrentTab] = useState<MainTabType>("METRICS");
   const [isSoftphoneOpen, setIsSoftphoneOpen] = useState(false);
   const [isNewCaseOpen, setIsNewCaseOpen] = useState(false);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [signingModalCase, setSigningModalCase] = useState<LegalCase | null>(null);
-  const [aiMode, setAiMode] = useState<'OFF' | 'HYBRID' | 'FULL_AUTONOMOUS'>('FULL_AUTONOMOUS');
+  const [aiMode, setAiMode] = useState<"OFF" | "HYBRID" | "FULL_AUTONOMOUS">("FULL_AUTONOMOUS");
   const [isWsConnected, setIsWsConnected] = useState(true);
 
-  // Fetch data
   const fetchData = async () => {
     try {
       const [casesRes, statsRes] = await Promise.all([
-        fetch('/api/cases'),
-        fetch('/api/stats')
+        fetch("/api/cases"),
+        fetch("/api/stats")
       ]);
       const casesData = await casesRes.json();
       const statsData = await statsRes.json();
@@ -170,54 +167,37 @@ export function App() {
       if (statsData && statsData.totalCallsToday) {
         setStats(statsData);
       }
-    } catch (err) {
-      console.warn("Using local mock cases store:", err);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
     fetchData();
-
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
     let ws: WebSocket | null = null;
-
     try {
       ws = new WebSocket(wsUrl);
       ws.onopen = () => setIsWsConnected(true);
       ws.onclose = () => setIsWsConnected(false);
       ws.onerror = () => setIsWsConnected(false);
-
       ws.onmessage = (event) => {
         try {
           const msg = JSON.parse(event.data);
-          if (msg.type === 'NEW_CASE') {
-            setCases((prev) => [msg.data, ...prev]);
-          } else if (msg.type === 'CASE_UPDATED') {
-            setCases((prev) => prev.map((c) => (c.id === msg.data.id ? msg.data : c)));
-          } else if (msg.type === 'RETAINER_UPDATED') {
-            setCases((prev) =>
-              prev.map((c) =>
-                c.id === msg.data.caseId ? { ...c, retainer: msg.data, status: msg.data.status === 'SIGNED' ? 'FIRMA_COMPLETADA' : c.status } : c
-              )
-            );
-          } else if (msg.type === 'STATS_UPDATED') {
-            setStats(msg.data);
-          }
+          if (msg.type === "NEW_CASE") setCases((prev) => [msg.data, ...prev]);
+          else if (msg.type === "CASE_UPDATED") setCases((prev) => prev.map((c) => (c.id === msg.data.id ? msg.data : c)));
+          else if (msg.type === "RETAINER_UPDATED") setCases((prev) => prev.map((c) => (c.id === msg.data.caseId ? { ...c, retainer: msg.data, status: msg.data.status === "SIGNED" ? "FIRMA_COMPLETADA" : c.status } : c)));
+          else if (msg.type === "STATS_UPDATED") setStats(msg.data);
         } catch (e) {}
       };
     } catch (e) {}
-
-    return () => {
-      if (ws) ws.close();
-    };
+    return () => { if (ws) ws.close(); };
   }, []);
 
   const handleUpdateCase = async (caseId: string, updatedFields: Partial<LegalCase>) => {
     try {
       const res = await fetch(`/api/cases/${caseId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFields)
       });
       const updated = await res.json();
@@ -229,58 +209,26 @@ export function App() {
 
   const handleSendRetainer = async (caseId: string) => {
     try {
-      const res = await fetch(`/api/retainers/${caseId}/send`, { method: 'POST' });
+      const res = await fetch(`/api/retainers/${caseId}/send`, { method: "POST" });
       const data = await res.json();
-      setCases((prev) =>
-        prev.map((c) =>
-          c.id === caseId ? { ...c, status: 'CONTRATO_ENVIADO', retainer: data.retainer } : c
-        )
-      );
-    } catch (err) {
-      const fakeRetainer = {
-        documentId: `RET-${Date.now()}`,
-        sentAt: new Date().toISOString(),
-        openedAt: null,
-        signedAt: null,
-        contingencyFeePercentage: 15,
-        status: 'SENT' as const,
-        signatureUrl: null
-      };
-      setCases((prev) =>
-        prev.map((c) =>
-          c.id === caseId ? { ...c, status: 'CONTRATO_ENVIADO', retainer: fakeRetainer } : c
-        )
-      );
-    }
+      setCases((prev) => prev.map((c) => (c.id === caseId ? { ...c, status: "CONTRATO_ENVIADO", retainer: data.retainer } : c)));
+    } catch (err) {}
   };
 
   const handleSignContract = async (caseId: string, signatureDataUrl: string) => {
     try {
       await fetch(`/api/retainers/${caseId}/sign`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ signatureDataUrl })
       });
     } catch (err) {}
-
-    setCases((prev) =>
-      prev.map((c) =>
-        c.id === caseId && c.retainer
-          ? {
-              ...c,
-              status: 'FIRMA_COMPLETADA',
-              retainer: { ...c.retainer, status: 'SIGNED', signedAt: new Date().toISOString(), signatureUrl: signatureDataUrl }
-            }
-          : c
-      )
-    );
+    setCases((prev) => prev.map((c) => (c.id === caseId && c.retainer ? { ...c, status: "FIRMA_COMPLETADA", retainer: { ...c.retainer, status: "SIGNED", signedAt: new Date().toISOString(), signatureUrl: signatureDataUrl } } : c)));
     setSigningModalCase(null);
   };
 
   return (
     <div className="min-h-screen bg-[#070b13] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
-      
-      {/* Top Navbar with the 2 Main Tabs & Softphone Shortcut */}
       <Navbar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
@@ -291,91 +239,46 @@ export function App() {
         isWsConnected={isWsConnected}
       />
 
-      {/* Main App Content */}
       <main className="flex-1 max-w-[1800px] w-full mx-auto p-3 sm:p-5 md:p-6 overflow-hidden flex flex-col min-w-0">
-        
-        {/* TAB 1: MÉTRICAS DE NEGOCIO (THE DEFAULT & FIRST VIEW) */}
-        {currentTab === 'METRICS' && (
+        {currentTab === "METRICS" && (
           <div className="flex-1 animate-fadeIn overflow-y-auto">
-            <AdminDashboard
-              cases={cases}
-              stats={stats}
-              onSwitchToAgentView={() => setIsSoftphoneOpen(true)}
-              onSelectCase={() => setCurrentTab('CASES')}
-            />
+            <AdminDashboard cases={cases} stats={stats} onSwitchToAgentView={() => setIsSoftphoneOpen(true)} onSelectCase={() => setCurrentTab("CASES")} />
           </div>
         )}
 
-        {/* TAB 2: CASOS & EXPEDIENTES (DEDICATED DIRECTORY & DRILL-DOWN) */}
-        {currentTab === 'CASES' && (
+        {currentTab === "CASES" && (
           <div className="flex-1 animate-fadeIn overflow-y-auto">
-            <CasesListView
-              cases={cases}
-              onUpdateCase={handleUpdateCase}
-              onSendRetainer={handleSendRetainer}
-              onOpenSignModal={(c) => setSigningModalCase(c)}
-              onOpenNewCase={() => setIsNewCaseOpen(true)}
-            />
+            <CasesListView cases={cases} onUpdateCase={handleUpdateCase} onSendRetainer={handleSendRetainer} onOpenSignModal={(c) => setSigningModalCase(c)} onOpenNewCase={() => setIsNewCaseOpen(true)} />
           </div>
         )}
 
+        {currentTab === "INBOX" && (
+          <div className="flex-1 animate-fadeIn overflow-hidden">
+            <OmnichannelInboxView cases={cases} onOpenCase={() => setCurrentTab("CASES")} />
+          </div>
+        )}
       </main>
 
-      {/* FLOATING SOFTPHONE MODAL / SHORTCUT */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0a0f1b]/95 backdrop-blur-lg border-t border-slate-800/90 py-1.5 px-3 flex items-center justify-around z-50 text-[10px] font-bold">
+        <button onClick={() => setCurrentTab("METRICS")} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl ${currentTab === "METRICS" ? "text-amber-400 bg-amber-500/10" : "text-slate-400"}`}><LayoutDashboard className="w-4 h-4" /><span>Métricas</span></button>
+        <button onClick={() => setCurrentTab("CASES")} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl ${currentTab === "CASES" ? "text-amber-400 bg-amber-500/10" : "text-slate-400"}`}><FolderKanban className="w-4 h-4" /><span>Casos</span></button>
+        <button onClick={() => setCurrentTab("INBOX")} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl ${currentTab === "INBOX" ? "text-amber-400 bg-amber-500/10" : "text-slate-400"}`}><MessageSquare className="w-4 h-4" /><span>Mensajería</span></button>
+        <button onClick={() => setIsSoftphoneOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-blue-400"><PhoneCall className="w-4 h-4" /><span>Softphone</span></button>
+      </div>
+
       {isSoftphoneOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#0e1626] border border-slate-700 rounded-3xl w-full max-w-md p-5 shadow-2xl relative flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Acceso Directo Softphone</h3>
-              <button
-                onClick={() => setIsSoftphoneOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <Softphone
-              activeCase={cases[0] || null}
-              activeRole="CLOSER"
-              onTransferToCloser={() => setIsSoftphoneOpen(false)}
-              onSendRetainer={handleSendRetainer}
-              onLogCall={() => {}}
-            />
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3"><h3 className="text-sm font-bold text-white uppercase tracking-wider">Acceso Directo Softphone</h3><button onClick={() => setIsSoftphoneOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"><X className="w-5 h-5" /></button></div>
+            <Softphone activeCase={cases[0] || null} activeRole="CLOSER" onTransferToCloser={() => setIsSoftphoneOpen(false)} onSendRetainer={handleSendRetainer} onLogCall={() => {}} />
           </div>
         </div>
       )}
 
-      {/* NEW CASE MODAL */}
-      <NewCaseModal
-        isOpen={isNewCaseOpen}
-        onClose={() => setIsNewCaseOpen(false)}
-        onCreateCase={(newCase) => {
-          setCases((prev) => [newCase, ...prev]);
-          setCurrentTab('CASES');
-        }}
-      />
-
-      {/* AI CONTROL MODAL */}
-      <AIAgentControlModal
-        isOpen={isAIModalOpen}
-        onClose={() => setIsAIModalOpen(false)}
-        aiMode={aiMode}
-        setAiMode={setAiMode}
-      />
-
-      {/* RETAINER SIGNING SIMULATOR */}
-      {signingModalCase && (
-        <RetainerSigningModal
-          caseItem={signingModalCase}
-          isOpen={true}
-          onClose={() => setSigningModalCase(null)}
-          onSign={(sig) => handleSignContract(signingModalCase.id, sig)}
-        />
-      )}
-
+      <NewCaseModal isOpen={isNewCaseOpen} onClose={() => setIsNewCaseOpen(false)} onCreateCase={(newCase) => { setCases((prev) => [newCase, ...prev]); setCurrentTab("CASES"); }} />
+      <AIAgentControlModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} aiMode={aiMode} setAiMode={setAiMode} />
+      {signingModalCase && <RetainerSigningModal caseItem={signingModalCase} isOpen={true} onClose={() => setSigningModalCase(null)} onSign={(sig) => handleSignContract(signingModalCase.id, sig)} />}
     </div>
   );
 }
-
 export default App;
