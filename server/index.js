@@ -1,13 +1,17 @@
-﻿const express = require('express');
-const http = require('http');
-const path = require('path');
-const cors = require('cors');
-const { WebSocketServer } = require('ws');
-const { getDb, saveDb, defaultCases, defaultStats } = require('./db');
+﻿import express from "express";
+import http from "http";
+import path from "path";
+import { fileURLToPath } from "url";
+import cors from "cors";
+import { WebSocketServer } from "ws";
+import { getDb, saveDb, defaultCases, defaultStats } from "./db.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server, path: '/ws' });
+const wss = new WebSocketServer({ server, path: "/ws" });
 
 const PORT = process.env.PORT || 3001;
 
@@ -15,7 +19,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Broadcast helper to all connected UI clients
 function broadcast(type, data) {
   const payload = JSON.stringify({ type, data });
   wss.clients.forEach((client) => {
@@ -25,7 +28,6 @@ function broadcast(type, data) {
   });
 }
 
-// In-memory messages store initialized with sample omnichannel chats
 let messagesStore = {
   "WC-8921": [
     { id: 1, channel: "WHATSAPP", sender: "CLIENT", text: "Hola, sufrí un accidente en el almacén de Amazon y mi supervisor no me quiere dar el reporte médico.", timestamp: "2026-08-30T14:02:00Z" },
@@ -41,63 +43,62 @@ let messagesStore = {
   "WC-9042": [
     { id: 1, channel: "INSTAGRAM", sender: "CLIENT", text: "Me lastimé la mano en la empacadora y tengo miedo que me corran porque no tengo papeles.", timestamp: "2026-08-30T15:50:00Z" },
     { id: 2, channel: "INSTAGRAM", sender: "AI_AGENT", text: "Guadalupe, el estatus migratorio no afecta tu derecho a compensación ni atención médica en California. Te estamos llamando.", timestamp: "2026-08-30T15:50:30Z" }
+  ],
+  "WC-9105": [
+    { id: 1, channel: "WHATSAPP", sender: "CLIENT", text: "Hola, me caí en la plataforma de FedEx en Fontana. Necesito saber si me cubren.", timestamp: "2026-08-30T16:10:00Z" }
   ]
 };
 
-// =================== CASES REST API ===================
-app.get('/api/cases', (req, res) => {
+app.get("/api/cases", (req, res) => {
   const db = getDb();
   res.json(db.cases);
 });
 
-app.get('/api/cases/:id', (req, res) => {
+app.get("/api/cases/:id", (req, res) => {
   const db = getDb();
   const found = db.cases.find(c => c.id === req.params.id);
   if (!found) return res.status(404).json({ error: "Case not found" });
   res.json(found);
 });
 
-app.post('/api/cases', (req, res) => {
+app.post("/api/cases", (req, res) => {
   const db = getDb();
   const newCase = {
     id: `WC-${Math.floor(1000 + Math.random() * 9000)}`,
     createdAt: new Date().toISOString(),
-    status: 'NUEVO_LEAD',
+    status: "NUEVO_LEAD",
     notes: [],
     retainer: null,
     ...req.body
   };
   db.cases.unshift(newCase);
   saveDb(db);
-  broadcast('NEW_CASE', newCase);
+  broadcast("NEW_CASE", newCase);
   res.status(201).json(newCase);
 });
 
-app.patch('/api/cases/:id', (req, res) => {
+app.patch("/api/cases/:id", (req, res) => {
   const db = getDb();
   const idx = db.cases.findIndex(c => c.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Case not found" });
-
   db.cases[idx] = { ...db.cases[idx], ...req.body };
   saveDb(db);
-  broadcast('CASE_UPDATED', db.cases[idx]);
+  broadcast("CASE_UPDATED", db.cases[idx]);
   res.json(db.cases[idx]);
 });
 
-// =================== STATS API ===================
-app.get('/api/stats', (req, res) => {
+app.get("/api/stats", (req, res) => {
   const db = getDb();
   res.json(db.stats || defaultStats);
 });
 
-// =================== OMNICHANNEL MESSAGING API ===================
-app.get('/api/cases/:id/messages', (req, res) => {
+app.get("/api/cases/:id/messages", (req, res) => {
   const msgs = messagesStore[req.params.id] || [];
   res.json(msgs);
 });
 
-app.post('/api/cases/:id/messages', (req, res) => {
-  const { text, channel = 'SMS', sender = 'AGENT' } = req.body;
+app.post("/api/cases/:id/messages", (req, res) => {
+  const { text, channel = "SMS", sender = "AGENT" } = req.body;
   if (!messagesStore[req.params.id]) {
     messagesStore[req.params.id] = [];
   }
@@ -109,101 +110,50 @@ app.post('/api/cases/:id/messages', (req, res) => {
     timestamp: new Date().toISOString()
   };
   messagesStore[req.params.id].push(newMsg);
-
-  broadcast('NEW_MESSAGE', { caseId: req.params.id, message: newMsg });
+  broadcast("NEW_MESSAGE", { caseId: req.params.id, message: newMsg });
   res.status(201).json(newMsg);
 });
 
-// INCOMING WEBHOOKS for SMS, WhatsApp, WebChat & Social Media
-app.post('/api/webhooks/incoming', (req, res) => {
-  const { caseId, from, channel = 'WHATSAPP', text } = req.body;
-  const targetId = caseId || "WC-8921";
-  
-  if (!messagesStore[targetId]) messagesStore[targetId] = [];
-  const incomingMsg = {
-    id: Date.now(),
-    channel,
-    sender: 'CLIENT',
-    text: text || "Nuevo mensaje recibido del cliente.",
-    timestamp: new Date().toISOString()
-  };
-  messagesStore[targetId].push(incomingMsg);
-  broadcast('NEW_MESSAGE', { caseId: targetId, message: incomingMsg });
-  res.json({ status: "received", message: incomingMsg });
-});
-
-// =================== RETAINER CONTRACTS API ===================
-app.post('/api/retainers/:caseId/send', (req, res) => {
+app.post("/api/retainers/:caseId/send", (req, res) => {
   const db = getDb();
   const idx = db.cases.findIndex(c => c.id === req.params.caseId);
   if (idx === -1) return res.status(404).json({ error: "Case not found" });
-
   const retainer = {
     documentId: `RET-2026-${Math.floor(1000 + Math.random() * 9000)}`,
     sentAt: new Date().toISOString(),
     openedAt: null,
     signedAt: null,
     contingencyFeePercentage: 15,
-    status: 'SENT',
+    status: "SENT",
     signatureUrl: null
   };
-
   db.cases[idx].retainer = retainer;
-  db.cases[idx].status = 'CONTRATO_ENVIADO';
+  db.cases[idx].status = "CONTRATO_ENVIADO";
   saveDb(db);
-
-  // Auto add dispatch message to omnichannel chat
-  if (!messagesStore[req.params.caseId]) messagesStore[req.params.caseId] = [];
-  messagesStore[req.params.caseId].push({
-    id: Date.now(),
-    channel: 'SMS',
-    sender: 'SYSTEM',
-    text: `[SISTEMA]: Contrato Retainer enviado por SMS al número ${db.cases[idx].phone}`,
-    timestamp: new Date().toISOString()
-  });
-
-  broadcast('RETAINER_UPDATED', { caseId: req.params.caseId, ...retainer });
+  broadcast("RETAINER_UPDATED", { caseId: req.params.caseId, ...retainer });
   res.json({ success: true, retainer });
 });
 
-app.post('/api/retainers/:caseId/sign', (req, res) => {
+app.post("/api/retainers/:caseId/sign", (req, res) => {
   const db = getDb();
   const idx = db.cases.findIndex(c => c.id === req.params.caseId);
   if (idx === -1) return res.status(404).json({ error: "Case not found" });
-
   const { signatureDataUrl } = req.body;
-  const currentRetainer = db.cases[idx].retainer || {
-    documentId: `RET-${Date.now()}`,
-    sentAt: new Date().toISOString(),
-    contingencyFeePercentage: 15
-  };
-
-  const updatedRetainer = {
-    ...currentRetainer,
-    status: 'SIGNED',
-    signedAt: new Date().toISOString(),
-    signatureUrl: signatureDataUrl || "data:image/svg+xml;utf8,<svg>Firmado</svg>"
-  };
-
+  const currentRetainer = db.cases[idx].retainer || { documentId: `RET-${Date.now()}`, sentAt: new Date().toISOString(), contingencyFeePercentage: 15 };
+  const updatedRetainer = { ...currentRetainer, status: "SIGNED", signedAt: new Date().toISOString(), signatureUrl: signatureDataUrl || "data:image/svg+xml;utf8,<svg>Firmado</svg>" };
   db.cases[idx].retainer = updatedRetainer;
-  db.cases[idx].status = 'FIRMA_COMPLETADA';
-  
-  if (db.stats) {
-    db.stats.retainersSignedOnCall = (db.stats.retainersSignedOnCall || 0) + 1;
-  }
+  db.cases[idx].status = "FIRMA_COMPLETADA";
+  if (db.stats) { db.stats.retainersSignedOnCall = (db.stats.retainersSignedOnCall || 0) + 1; }
   saveDb(db);
-
-  broadcast('RETAINER_UPDATED', { caseId: req.params.caseId, ...updatedRetainer });
-  broadcast('STATS_UPDATED', db.stats);
+  broadcast("RETAINER_UPDATED", { caseId: req.params.caseId, ...updatedRetainer });
+  broadcast("STATS_UPDATED", db.stats);
   res.json({ success: true, retainer: updatedRetainer });
 });
 
-// Serve frontend SPA in production
-const distPath = path.join(__dirname, '..', 'dist');
+const distPath = path.join(__dirname, "..", "dist");
 app.use(express.static(distPath));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
 });
 
 server.listen(PORT, () => {

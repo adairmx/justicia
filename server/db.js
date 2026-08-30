@@ -1,9 +1,12 @@
-﻿const fs = require('fs');
-const path = require('path');
+﻿import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const DB_FILE = path.join(__dirname, 'data.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DB_FILE = path.join(__dirname, "data.json");
 
-const defaultCases = [
+export const defaultCases = [
   {
     id: "WC-8921",
     leadName: "Carlos Ramirez",
@@ -125,42 +128,10 @@ const defaultCases = [
       { id: 1, author: "Carlos V. (Liner)", text: "Intake completo. Retainer SMS enviado mientras habla con Closer.", timestamp: "2026-08-30T16:18:00Z" }
     ],
     createdAt: "2026-08-30T16:15:00Z"
-  },
-  {
-    id: "PI-4050",
-    leadName: "Alejandro Mendoza",
-    phone: "+1 (714) 555-0133",
-    email: "amendoza@example.com",
-    language: "ES",
-    caseType: "Personal_Injury",
-    state: "CA",
-    employer: "Construcción Residencial",
-    injuryDate: "2026-08-20",
-    reportedToBoss: true,
-    receivedMedicalCare: true,
-    hasAttorney: false,
-    injuryDetails: "Accidente de auto en autopista I-5 hacia el trabajo. Impacto trasero por camión comercial.",
-    estimatedCaseValue: "$145,000",
-    status: "EN_TRATAMIENTO_MEDICO",
-    assignedLiner: "Maria G. (Liner)",
-    assignedCloser: "Adair (Master Closer)",
-    retainer: {
-      documentId: "RET-2026-4050",
-      sentAt: "2026-08-25T11:00:00Z",
-      openedAt: "2026-08-25T11:02:00Z",
-      signedAt: "2026-08-25T11:05:00Z",
-      contingencyFeePercentage: 15,
-      status: "SIGNED",
-      signatureUrl: "data:image/svg+xml;utf8,<svg>Alejandro Mendoza</svg>"
-    },
-    notes: [
-      { id: 1, author: "Adair (Closer)", text: "Retainer firmado. Asignado a red de resonancia magnética (MRI).", timestamp: "2026-08-25T11:05:00Z" }
-    ],
-    createdAt: "2026-08-25T10:45:00Z"
   }
 ];
 
-const defaultStats = {
+export const defaultStats = {
   totalCallsToday: 76,
   intakeQualified: 42,
   closersTransferred: 33,
@@ -168,40 +139,28 @@ const defaultStats = {
   conversionRate: "25.0%"
 };
 
-// Always write initial cases if empty or missing
-function initDb() {
+export function getDb() {
   if (!fs.existsSync(DB_FILE)) {
     const data = { cases: defaultCases, stats: defaultStats, callLogs: [] };
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
     return data;
   }
   try {
-    const content = fs.readFileSync(DB_FILE, 'utf8');
+    const content = fs.readFileSync(DB_FILE, "utf8");
     const data = JSON.parse(content);
     if (!data.cases || data.cases.length === 0) {
       data.cases = defaultCases;
       data.stats = defaultStats;
-      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
     }
     return data;
   } catch (err) {
     const data = { cases: defaultCases, stats: defaultStats, callLogs: [] };
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
     return data;
   }
 }
 
-function getDb() {
-  return initDb();
+export function saveDb(data) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf8");
 }
-
-function saveDb(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-}
-
-module.exports = {
-  getDb,
-  saveDb,
-  defaultCases,
-  defaultStats
-};
