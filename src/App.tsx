@@ -3,24 +3,24 @@ import { Navbar } from './components/Navbar';
 import { Softphone } from './components/Softphone';
 import { PipelineBoard } from './components/PipelineBoard';
 import { CaseDetails } from './components/CaseDetails';
+import { AdminDashboard } from './components/AdminDashboard';
 import { RetainerSigningModal } from './components/RetainerSigningModal';
 import { NewCaseModal } from './components/NewCaseModal';
 import { AIAgentControlModal } from './components/AIAgentControlModal';
 import { LegalCase, Stats, CallRecord } from './types';
 import { 
+  LayoutDashboard, 
   FolderKanban, 
   FileText, 
   PhoneCall, 
-  Flame, 
-  Bot, 
-  TrendingUp,
-  Activity
+  Headphones 
 } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [cases, setCases] = useState<LegalCase[]>([]);
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
-  const [activeRole, setActiveRole] = useState<'LINER' | 'CLOSER' | 'ADMIN'>('LINER');
+  const [activeRole, setActiveRole] = useState<'LINER' | 'CLOSER' | 'ADMIN'>('CLOSER');
+  const [currentView, setCurrentView] = useState<'ADMIN_DASHBOARD' | 'AGENT_WORKSPACE'>('ADMIN_DASHBOARD');
   const [aiMode, setAiMode] = useState<'OFF' | 'HYBRID' | 'FULL_AUTONOMOUS'>('OFF');
   const [stats, setStats] = useState<Stats>({
     totalCallsToday: 42,
@@ -31,8 +31,8 @@ export const App: React.FC = () => {
   });
   const [isWsConnected, setIsWsConnected] = useState(false);
 
-  // Mobile Active View: 'CASES' | 'DETAILS' | 'PHONE'
-  const [mobileTab, setMobileTab] = useState<'CASES' | 'DETAILS' | 'PHONE'>('DETAILS');
+  // Mobile Active View
+  const [mobileTab, setMobileTab] = useState<'ADMIN' | 'CASES' | 'DETAILS' | 'PHONE'>('ADMIN');
 
   // Modals
   const [isNewCaseOpen, setIsNewCaseOpen] = useState(false);
@@ -133,6 +133,7 @@ export const App: React.FC = () => {
       });
       fetchData();
       setActiveRole('CLOSER');
+      setCurrentView('AGENT_WORKSPACE');
       setMobileTab('DETAILS');
     } catch (err) {
       console.error(err);
@@ -183,6 +184,7 @@ export const App: React.FC = () => {
       const created = await res.json();
       setCases((prev) => [created, ...prev]);
       setSelectedCaseId(created.id);
+      setCurrentView('AGENT_WORKSPACE');
       setMobileTab('DETAILS');
     } catch (err) {
       console.error(err);
@@ -206,6 +208,7 @@ export const App: React.FC = () => {
       fetchData();
       setSelectedCaseId(data.caseId);
       setActiveRole('CLOSER');
+      setCurrentView('AGENT_WORKSPACE');
       setMobileTab('DETAILS');
     } catch (err) {
       console.error(err);
@@ -220,6 +223,11 @@ export const App: React.FC = () => {
         stats={stats}
         activeRole={activeRole}
         setActiveRole={setActiveRole}
+        currentView={currentView}
+        setCurrentView={(view) => {
+          setCurrentView(view);
+          setMobileTab(view === 'ADMIN_DASHBOARD' ? 'ADMIN' : 'DETAILS');
+        }}
         aiMode={aiMode}
         setAiMode={setAiMode}
         onOpenNewCase={() => setIsNewCaseOpen(true)}
@@ -228,85 +236,129 @@ export const App: React.FC = () => {
         isWsConnected={isWsConnected}
       />
 
-      {/* Main Workspace Layout */}
-      <main className="flex-1 p-3 md:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5 max-w-[1800px] w-full mx-auto">
-        
-        {/* Left Column: Softphone + Pipeline List (Desktop: always visible, Mobile: conditional) */}
-        <div className={`lg:col-span-4 xl:col-span-4 flex flex-col gap-4 ${
-          mobileTab === 'DETAILS' ? 'hidden lg:flex' : mobileTab === 'PHONE' ? 'flex lg:flex' : 'flex lg:flex'
-        }`}>
+      {/* VIEW 1: EXECUTIVE ADMIN & ANALYTICS DASHBOARD */}
+      {currentView === 'ADMIN_DASHBOARD' && (
+        <main className="flex-1 p-4 md:p-6 lg:p-8 animate-fadeIn">
+          <AdminDashboard
+            cases={cases}
+            stats={stats}
+            onSwitchToAgentView={(role) => {
+              setActiveRole(role);
+              setCurrentView('AGENT_WORKSPACE');
+              setMobileTab('DETAILS');
+            }}
+            onSelectCase={(item) => {
+              setSelectedCaseId(item.id);
+              setCurrentView('AGENT_WORKSPACE');
+              setMobileTab('DETAILS');
+            }}
+          />
+        </main>
+      )}
+
+      {/* VIEW 2: FULL AGENT & CLOSER WORKSPACE (Dual column Desktop + Mobile responsive) */}
+      {currentView === 'AGENT_WORKSPACE' && (
+        <main className="flex-1 p-3 md:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5 max-w-[1800px] w-full mx-auto animate-fadeIn">
           
-          {/* Softphone (shown when on PHONE tab or on Desktop) */}
-          <div className={`${mobileTab === 'CASES' ? 'hidden lg:block' : 'block'}`}>
-            <Softphone
+          {/* Left Column: Softphone + Pipeline List (Desktop: always visible, Mobile: conditional) */}
+          <div className={`lg:col-span-4 xl:col-span-4 flex flex-col gap-4 ${
+            mobileTab === 'DETAILS' ? 'hidden lg:flex' : mobileTab === 'PHONE' ? 'flex lg:flex' : 'flex lg:flex'
+          }`}>
+            
+            {/* Softphone (shown when on PHONE tab or on Desktop) */}
+            <div className={`${mobileTab === 'CASES' ? 'hidden lg:block' : 'block'}`}>
+              <Softphone
+                activeCase={activeCase}
+                activeRole={activeRole}
+                onTransferToCloser={handleTransferToCloser}
+                onSendRetainer={handleSendRetainer}
+                onLogCall={handleLogCall}
+              />
+            </div>
+
+            {/* Pipeline List (shown when on CASES tab or on Desktop) */}
+            <div className={`flex-1 ${mobileTab === 'PHONE' ? 'hidden lg:block' : 'block'}`}>
+              <PipelineBoard
+                cases={cases}
+                selectedCaseId={selectedCaseId}
+                onSelectCase={(item) => {
+                  setSelectedCaseId(item.id);
+                  setMobileTab('DETAILS');
+                }}
+                activeRole={activeRole}
+              />
+            </div>
+          </div>
+
+          {/* Right Column: Case Intake & Retainer Command Center */}
+          <div className={`lg:col-span-8 xl:col-span-8 flex flex-col ${
+            mobileTab !== 'DETAILS' ? 'hidden lg:flex' : 'flex'
+          }`}>
+            <CaseDetails
               activeCase={activeCase}
               activeRole={activeRole}
-              onTransferToCloser={handleTransferToCloser}
+              onUpdateCase={handleUpdateCase}
               onSendRetainer={handleSendRetainer}
-              onLogCall={handleLogCall}
+              onOpenSignModal={(caseItem) => setSignModalCase(caseItem)}
+              onTransferToCloser={handleTransferToCloser}
             />
           </div>
 
-          {/* Pipeline List (shown when on CASES tab or on Desktop) */}
-          <div className={`flex-1 ${mobileTab === 'PHONE' ? 'hidden lg:block' : 'block'}`}>
-            <PipelineBoard
-              cases={cases}
-              selectedCaseId={selectedCaseId}
-              onSelectCase={(item) => {
-                setSelectedCaseId(item.id);
-                setMobileTab('DETAILS');
-              }}
-              activeRole={activeRole}
-            />
-          </div>
-        </div>
+        </main>
+      )}
 
-        {/* Right Column: Case Intake & Retainer Command Center */}
-        <div className={`lg:col-span-8 xl:col-span-8 flex flex-col ${
-          mobileTab !== 'DETAILS' ? 'hidden lg:flex' : 'flex'
-        }`}>
-          <CaseDetails
-            activeCase={activeCase}
-            activeRole={activeRole}
-            onUpdateCase={handleUpdateCase}
-            onSendRetainer={handleSendRetainer}
-            onOpenSignModal={(caseItem) => setSignModalCase(caseItem)}
-            onTransferToCloser={handleTransferToCloser}
-          />
-        </div>
-
-      </main>
-
-      {/* Mobile Bottom Navigation Bar (Mobile / Smartphone / Tablet only) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0c121e]/95 backdrop-blur-md border-t border-slate-800 px-4 py-2 flex items-center justify-around text-xs">
+      {/* Mobile Bottom Navigation Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0c121e]/95 backdrop-blur-md border-t border-slate-800 px-3 py-2 flex items-center justify-around text-xs">
         <button
-          onClick={() => setMobileTab('CASES')}
-          className={`flex flex-col items-center gap-1 font-semibold py-1 px-3 rounded-xl transition-all ${
-            mobileTab === 'CASES' ? 'text-amber-400 bg-amber-500/10' : 'text-slate-400 hover:text-slate-200'
+          onClick={() => {
+            setCurrentView('ADMIN_DASHBOARD');
+            setMobileTab('ADMIN');
+          }}
+          className={`flex flex-col items-center gap-1 font-semibold py-1 px-2.5 rounded-xl transition-all ${
+            currentView === 'ADMIN_DASHBOARD' ? 'text-amber-400 bg-amber-500/10' : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <LayoutDashboard className="w-4 h-4" />
+          <span className="text-[9px]">Analíticas</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setCurrentView('AGENT_WORKSPACE');
+            setMobileTab('CASES');
+          }}
+          className={`flex flex-col items-center gap-1 font-semibold py-1 px-2.5 rounded-xl transition-all ${
+            currentView === 'AGENT_WORKSPACE' && mobileTab === 'CASES' ? 'text-amber-400 bg-amber-500/10' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <FolderKanban className="w-4 h-4" />
-          <span className="text-[10px]">Bandeja ({cases.length})</span>
+          <span className="text-[9px]">Bandeja ({cases.length})</span>
         </button>
 
         <button
-          onClick={() => setMobileTab('DETAILS')}
-          className={`flex flex-col items-center gap-1 font-semibold py-1 px-3 rounded-xl transition-all ${
-            mobileTab === 'DETAILS' ? 'text-amber-400 bg-amber-500/10' : 'text-slate-400 hover:text-slate-200'
+          onClick={() => {
+            setCurrentView('AGENT_WORKSPACE');
+            setMobileTab('DETAILS');
+          }}
+          className={`flex flex-col items-center gap-1 font-semibold py-1 px-2.5 rounded-xl transition-all ${
+            currentView === 'AGENT_WORKSPACE' && mobileTab === 'DETAILS' ? 'text-amber-400 bg-amber-500/10' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <FileText className="w-4 h-4" />
-          <span className="text-[10px]">Ficha / Cierre</span>
+          <span className="text-[9px]">Ficha / Cierre</span>
         </button>
 
         <button
-          onClick={() => setMobileTab('PHONE')}
-          className={`flex flex-col items-center gap-1 font-semibold py-1 px-3 rounded-xl transition-all ${
-            mobileTab === 'PHONE' ? 'text-amber-400 bg-amber-500/10' : 'text-slate-400 hover:text-slate-200'
+          onClick={() => {
+            setCurrentView('AGENT_WORKSPACE');
+            setMobileTab('PHONE');
+          }}
+          className={`flex flex-col items-center gap-1 font-semibold py-1 px-2.5 rounded-xl transition-all ${
+            currentView === 'AGENT_WORKSPACE' && mobileTab === 'PHONE' ? 'text-amber-400 bg-amber-500/10' : 'text-slate-400 hover:text-slate-200'
           }`}
         >
           <PhoneCall className="w-4 h-4" />
-          <span className="text-[10px]">Softphone</span>
+          <span className="text-[9px]">Softphone</span>
         </button>
       </div>
 
