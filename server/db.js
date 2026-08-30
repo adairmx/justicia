@@ -1,170 +1,207 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+﻿const fs = require('fs');
+const path = require('path');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const DB_FILE = path.join(__dirname, 'data.json');
 
-const INITIAL_DATA = {
-  cases: [
-    {
-      id: "CASE-101",
-      leadName: "Carlos Ramirez",
-      phone: "+1 (818) 555-0192",
-      email: "carlos.ramirez@example.com",
-      language: "ES",
-      state: "CA",
-      caseType: "Workers_Comp",
-      status: "EN_LLAMADA_CLOSER",
-      assignedLiner: "Maria G. (Venezuela)",
-      assignedCloser: "Adair (Closer/Clone)",
-      injuryDate: "2026-06-14",
-      employer: "Amazon Logistics Warehouse (Ontario, CA)",
-      injuryDetails: "Hernia discal L4-L5 y dolor ciático severo al levantar tarima de 65 lbs.",
-      reportedToBoss: true,
-      receivedMedicalCare: false,
-      hasAttorney: false,
-      estimatedCaseValue: "$45,000 - $85,000",
-      notes: [
-        { id: 1, author: "Maria G. (Liner)", text: "Liner Intake: Lesión en almacén hace 2 meses. El patrón no quiso abrir reclamo de seguro. Tiene miedo de despido. Califica 100%. Pasado a Closer.", timestamp: "2026-08-30T13:45:00Z" }
-      ],
-      retainer: {
-        documentId: "DOC-88392",
-        status: "SENT", // SENT | OPENED | SIGNED
-        sentAt: "2026-08-30T14:02:10Z",
-        openedAt: "2026-08-30T14:03:00Z",
-        signedAt: null,
-        smsUrl: "https://justicia.law/sign/DOC-88392",
-        contingencyFeePercentage: 15
-      },
-      createdAt: "2026-08-30T13:30:00Z"
+const defaultCases = [
+  {
+    id: "WC-8921",
+    leadName: "Carlos Ramirez",
+    phone: "+1 (818) 555-0192",
+    email: "carlos.ramirez@example.com",
+    language: "ES",
+    caseType: "Workers_Comp",
+    state: "CA",
+    employer: "Amazon Logistics Warehouse (San Bernardino)",
+    injuryDate: "2026-08-14",
+    reportedToBoss: true,
+    receivedMedicalCare: false,
+    hasAttorney: false,
+    injuryDetails: "Lesión lumbar severa (L4-L5) levantando tarima de 65 lbs en turno nocturno. Supervisor negó reporte de accidente DWC-1.",
+    estimatedCaseValue: "$65,000",
+    status: "FIRMA_COMPLETADA",
+    assignedLiner: "Maria G. (Liner)",
+    assignedCloser: "Adair (Master Closer)",
+    retainer: {
+      documentId: "RET-2026-8921",
+      sentAt: "2026-08-30T14:15:00Z",
+      openedAt: "2026-08-30T14:16:30Z",
+      signedAt: "2026-08-30T14:18:45Z",
+      contingencyFeePercentage: 15,
+      status: "SIGNED",
+      signatureUrl: "data:image/svg+xml;utf8,<svg>Carlos Ramirez</svg>"
     },
-    {
-      id: "CASE-102",
-      leadName: "Guadalupe Morales",
-      phone: "+1 (323) 555-0144",
-      email: "guadalupe.m@example.com",
-      language: "ES",
-      state: "CA",
-      caseType: "Workers_Comp",
-      status: "CALIFICADO_PARA_CLOSER",
-      assignedLiner: "Carlos V. (Venezuela)",
-      assignedCloser: null,
-      injuryDate: "2026-07-02",
-      employer: "Fresh Produce Packaging Inc. (Vernon, CA)",
-      injuryDetails: "Síndrome de túnel carpiano bilateral y tendinitis por movimiento repetitivo en banda.",
-      reportedToBoss: true,
-      receivedMedicalCare: true,
-      hasAttorney: false,
-      estimatedCaseValue: "$30,000 - $55,000",
-      notes: [
-        { id: 1, author: "Carlos V. (Liner)", text: "Trabajó 4 años cortando verdura. Patrón le dio solo hielo y pastillas. Requiere resonancia urgente. Lista en fila para llamada de Closer.", timestamp: "2026-08-30T14:10:00Z" }
-      ],
-      retainer: null,
-      createdAt: "2026-08-30T14:05:00Z"
+    notes: [
+      { id: 1, author: "Maria G. (Liner)", text: "Intake calificado: Sin abogado previo, lesión en horario laboral hace 16 días.", timestamp: "2026-08-30T14:10:00Z" },
+      { id: 2, author: "Adair (Closer)", text: "Explicado Código CA § 132a anti-despido. Cliente firmó Retainer en llamada.", timestamp: "2026-08-30T14:18:45Z" }
+    ],
+    createdAt: "2026-08-30T14:05:00Z"
+  },
+  {
+    id: "PI-4019",
+    leadName: "Michael Johnson",
+    phone: "+1 (213) 555-0188",
+    email: "mjohnson@example.com",
+    language: "EN",
+    caseType: "Personal_Injury",
+    state: "CA",
+    employer: "Freelance / Rideshare Driver",
+    injuryDate: "2026-08-22",
+    reportedToBoss: true,
+    receivedMedicalCare: true,
+    hasAttorney: false,
+    injuryDetails: "Choque en T (T-Bone collision) en intersección en Los Angeles. Esguince cervical y fractura de muñeca.",
+    estimatedCaseValue: "$120,000",
+    status: "FIRMA_COMPLETADA",
+    assignedLiner: "Carlos V. (Liner)",
+    assignedCloser: "Adair AI Clone (Hermes 3)",
+    retainer: {
+      documentId: "RET-2026-4019",
+      sentAt: "2026-08-30T15:20:00Z",
+      openedAt: "2026-08-30T15:21:00Z",
+      signedAt: "2026-08-30T15:23:12Z",
+      contingencyFeePercentage: 15,
+      status: "SIGNED",
+      signatureUrl: "data:image/svg+xml;utf8,<svg>Michael Johnson</svg>"
     },
-    {
-      id: "CASE-103",
-      leadName: "Michael Johnson",
-      phone: "+1 (213) 555-0188",
-      email: "mjohnson99@example.com",
-      language: "EN",
-      state: "TX",
-      caseType: "Personal_Injury",
-      status: "FIRMA_COMPLETADA",
-      assignedLiner: "Maria G.",
-      assignedCloser: "Adair AI Clone",
-      injuryDate: "2026-08-10",
-      employer: "N/A - Auto Accident T-Bone collision",
-      injuryDetails: "Cervical whiplash and knee trauma after delivery van collision.",
-      reportedToBoss: true,
-      receivedMedicalCare: true,
-      hasAttorney: false,
-      estimatedCaseValue: "$95,000 - $150,000",
-      notes: [
-        { id: 1, author: "Maria G.", text: "Intake done. Police report ready.", timestamp: "2026-08-30T11:00:00Z" },
-        { id: 2, author: "Adair AI Clone", text: "In-call close executed in 6m 12s. Retainer signed via SMS on-call. Case assigned to Medical Network for MRI.", timestamp: "2026-08-30T11:15:30Z" }
-      ],
-      retainer: {
-        documentId: "DOC-88310",
-        status: "SIGNED",
-        sentAt: "2026-08-30T11:08:00Z",
-        openedAt: "2026-08-30T11:09:12Z",
-        signedAt: "2026-08-30T11:14:45Z",
-        smsUrl: "https://justicia.law/sign/DOC-88310",
-        contingencyFeePercentage: 33
-      },
-      createdAt: "2026-08-30T10:45:00Z"
-    }
-  ],
-  calls: [
-    {
-      id: "CALL-901",
-      caseId: "CASE-101",
-      callerName: "Carlos Ramirez",
-      phoneNumber: "+1 (818) 555-0192",
-      type: "TRANSFER_CLOSER",
-      status: "IN_PROGRESS",
-      agent: "Adair (Closer)",
-      durationSeconds: 312,
-      startedAt: "2026-08-30T14:00:00Z",
-      transcript: "Liner Maria: Carlos, te paso con el especialista de retención... Closer Adair: Qué tal Carlos, ya leí lo de tu hernia en Amazon. No te preocupes por el patrón, en California el código laboral 132a prohíbe represalias..."
+    notes: [
+      { id: 1, author: "Carlos V. (Liner)", text: "Reporte policial disponible, contraparte 100% culpable.", timestamp: "2026-08-30T15:15:00Z" },
+      { id: 2, author: "Adair AI Clone", text: "Retainer enviado vía SMS y firmado electrónicamente en 3 minutos.", timestamp: "2026-08-30T15:23:12Z" }
+    ],
+    createdAt: "2026-08-30T15:10:00Z"
+  },
+  {
+    id: "WC-9042",
+    leadName: "Guadalupe Morales",
+    phone: "+1 (619) 555-0144",
+    email: "gmorales@example.com",
+    language: "ES",
+    caseType: "Workers_Comp",
+    state: "CA",
+    employer: "Fresh Produce Packaging Inc. (Vernon, CA)",
+    injuryDate: "2026-08-28",
+    reportedToBoss: true,
+    receivedMedicalCare: false,
+    hasAttorney: false,
+    injuryDetails: "Atrapamiento de mano derecha en banda transportadora de empaque. Laceración profunda y trauma articular.",
+    estimatedCaseValue: "$85,000",
+    status: "CALIFICADO_PARA_CLOSER",
+    assignedLiner: "Maria G. (Liner)",
+    assignedCloser: "Adair (Master Closer)",
+    retainer: null,
+    notes: [
+      { id: 1, author: "Maria G. (Liner)", text: "La empresa no quiso llevarla a la clínica. Muy preocupada por costos.", timestamp: "2026-08-30T16:00:00Z" }
+    ],
+    createdAt: "2026-08-30T15:55:00Z"
+  },
+  {
+    id: "WC-9105",
+    leadName: "Roberto Sanchez",
+    phone: "+1 (909) 555-0177",
+    email: "rsanchez@example.com",
+    language: "ES",
+    caseType: "Workers_Comp",
+    state: "CA",
+    employer: "FedEx Ground Distribution (Fontana)",
+    injuryDate: "2026-08-29",
+    reportedToBoss: true,
+    receivedMedicalCare: true,
+    hasAttorney: false,
+    injuryDetails: "Caída desde plataforma de carga (altura 4 pies). Lesión en menisco de rodilla izquierda.",
+    estimatedCaseValue: "$55,000",
+    status: "CONTRATO_ENVIADO",
+    assignedLiner: "Carlos V. (Liner)",
+    assignedCloser: "Adair (Master Closer)",
+    retainer: {
+      documentId: "RET-2026-9105",
+      sentAt: "2026-08-30T16:20:00Z",
+      openedAt: "2026-08-30T16:22:00Z",
+      signedAt: null,
+      contingencyFeePercentage: 15,
+      status: "OPENED",
+      signatureUrl: null
     },
-    {
-      id: "CALL-900",
-      caseId: "CASE-103",
-      callerName: "Michael Johnson",
-      phoneNumber: "+1 (213) 555-0188",
-      type: "INBOUND_AI_CLOSE",
-      status: "COMPLETED",
-      agent: "Adair AI Clone",
-      durationSeconds: 435,
-      startedAt: "2026-08-30T11:05:00Z",
-      recordingUrl: "https://actions.google.com/sounds/v1/telephones/phone_calling.ogg",
-      transcript: "AI Closer: Michael, I'm sending your representation contract right now via text. Stay on the line... Michael: Got the text! Just signed it with my finger. AI Closer: Received! Your case is officially opened."
-    }
-  ],
-  messages: [
-    {
-      id: "MSG-1",
-      caseId: "CASE-101",
-      sender: "CLIENT",
-      channel: "SMS",
-      text: "Ya me llegó el mensaje pero tengo miedo de que el supervisor se entere si firmo esto hoy.",
-      timestamp: "2026-08-30T14:02:40Z"
+    notes: [
+      { id: 1, author: "Carlos V. (Liner)", text: "Intake completo. Retainer SMS enviado mientras habla con Closer.", timestamp: "2026-08-30T16:18:00Z" }
+    ],
+    createdAt: "2026-08-30T16:15:00Z"
+  },
+  {
+    id: "PI-4050",
+    leadName: "Alejandro Mendoza",
+    phone: "+1 (714) 555-0133",
+    email: "amendoza@example.com",
+    language: "ES",
+    caseType: "Personal_Injury",
+    state: "CA",
+    employer: "Construcción Residencial",
+    injuryDate: "2026-08-20",
+    reportedToBoss: true,
+    receivedMedicalCare: true,
+    hasAttorney: false,
+    injuryDetails: "Accidente de auto en autopista I-5 hacia el trabajo. Impacto trasero por camión comercial.",
+    estimatedCaseValue: "$145,000",
+    status: "EN_TRATAMIENTO_MEDICO",
+    assignedLiner: "Maria G. (Liner)",
+    assignedCloser: "Adair (Master Closer)",
+    retainer: {
+      documentId: "RET-2026-4050",
+      sentAt: "2026-08-25T11:00:00Z",
+      openedAt: "2026-08-25T11:02:00Z",
+      signedAt: "2026-08-25T11:05:00Z",
+      contingencyFeePercentage: 15,
+      status: "SIGNED",
+      signatureUrl: "data:image/svg+xml;utf8,<svg>Alejandro Mendoza</svg>"
     },
-    {
-      id: "MSG-2",
-      caseId: "CASE-101",
-      sender: "AGENT",
-      channel: "SMS",
-      text: "Carlos, el reclamo va directo a la aseguradora estatal/privada. Tu supervisor no puede tocar tu trabajo por ley. Abre el enlace con confianza.",
-      timestamp: "2026-08-30T14:03:15Z"
-    }
-  ],
-  stats: {
-    totalCallsToday: 42,
-    intakeQualified: 28,
-    closersTransferred: 22,
-    retainersSignedOnCall: 18,
-    conversionRate: "81.8%"
+    notes: [
+      { id: 1, author: "Adair (Closer)", text: "Retainer firmado. Asignado a red de resonancia magnética (MRI).", timestamp: "2026-08-25T11:05:00Z" }
+    ],
+    createdAt: "2026-08-25T10:45:00Z"
   }
+];
+
+const defaultStats = {
+  totalCallsToday: 76,
+  intakeQualified: 42,
+  closersTransferred: 33,
+  retainersSignedOnCall: 19,
+  conversionRate: "25.0%"
 };
 
-export function getDb() {
+// Always write initial cases if empty or missing
+function initDb() {
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify(INITIAL_DATA, null, 2));
-    return INITIAL_DATA;
+    const data = { cases: defaultCases, stats: defaultStats, callLogs: [] };
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+    return data;
   }
   try {
-    const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    return JSON.parse(raw);
+    const content = fs.readFileSync(DB_FILE, 'utf8');
+    const data = JSON.parse(content);
+    if (!data.cases || data.cases.length === 0) {
+      data.cases = defaultCases;
+      data.stats = defaultStats;
+      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+    }
+    return data;
   } catch (err) {
-    return INITIAL_DATA;
+    const data = { cases: defaultCases, stats: defaultStats, callLogs: [] };
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+    return data;
   }
 }
 
-export function saveDb(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+function getDb() {
+  return initDb();
 }
+
+function saveDb(data) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+}
+
+module.exports = {
+  getDb,
+  saveDb,
+  defaultCases,
+  defaultStats
+};
