@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   Phone, 
   PhoneOff, 
@@ -7,11 +7,8 @@ import {
   Volume2, 
   VolumeX, 
   ArrowRightLeft, 
-  User, 
-  Clock, 
   Activity,
   Send,
-  Sparkles,
   PhoneCall
 } from 'lucide-react';
 import { LegalCase } from '../types';
@@ -45,7 +42,6 @@ export const Softphone: React.FC<SoftphoneProps> = ({
     }
   }, [activeCase]);
 
-  // Call timer effect
   useEffect(() => {
     let interval: any = null;
     if (callStatus === 'CONNECTED') {
@@ -61,14 +57,14 @@ export const Softphone: React.FC<SoftphoneProps> = ({
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return ${mins.toString().padStart(2, '0')}:;
   };
 
   const handleStartCall = () => {
     setCallStatus('RINGING');
     setTimeout(() => {
       setCallStatus('CONNECTED');
-    }, 1500);
+    }, 1200);
   };
 
   const handleEndCall = () => {
@@ -90,180 +86,156 @@ export const Softphone: React.FC<SoftphoneProps> = ({
   };
 
   return (
-    <div className="bg-[#0e1626] border border-slate-800/90 rounded-2xl p-4 shadow-xl flex flex-col gap-3 relative overflow-hidden">
+    <div className=\"bg-[#0e1626] border border-slate-800/90 rounded-2xl p-3.5 sm:p-4 shadow-xl flex flex-col gap-3 relative overflow-hidden min-w-0\">
       
-      {/* Background soft glow when in call */}
       {callStatus === 'CONNECTED' && (
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+        <div className=\"absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-blue-500/5 pointer-events-none\" />
       )}
 
       {/* Top Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className={`p-1.5 rounded-lg ${
-            callStatus === 'CONNECTED' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'
-          }`}>
-            <PhoneCall className="w-4 h-4" />
+      <div className=\"flex items-center justify-between gap-2 min-w-0\">
+        <div className=\"flex items-center gap-2 min-w-0\">
+          <div className={p-1.5 rounded-lg shrink-0 }>
+            <PhoneCall className=\"w-3.5 h-3.5 sm:w-4 sm:h-4\" />
           </div>
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">Twilio WebRTC Softphone</h3>
-            <p className="text-[11px] text-slate-400">Línea VoIP de Alta Fidelidad (Opus 48kHz)</p>
+          <div className=\"min-w-0\">
+            <h3 className=\"text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-200 truncate\">Twilio Softphone</h3>
+            <p className=\"text-[10px] text-slate-400 truncate\">VoIP Opus 48kHz</p>
           </div>
         </div>
 
-        {/* Live Call Duration / Status */}
         {callStatus === 'CONNECTED' ? (
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold animate-pulse">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+          <div className=\"flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-[11px] sm:text-xs font-mono font-bold animate-pulse shrink-0\">
+            <span className=\"w-1.5 h-1.5 rounded-full bg-emerald-400\" />
             <span>{formatDuration(callDuration)}</span>
           </div>
         ) : callStatus === 'RINGING' ? (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-950/80 border border-amber-500/30 text-amber-400 text-xs font-bold animate-bounce">
+          <div className=\"flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-950/80 border border-amber-500/30 text-amber-400 text-[10px] sm:text-xs font-bold animate-bounce shrink-0\">
             <span>Marcando...</span>
           </div>
         ) : (
-          <span className="text-[11px] font-medium text-slate-500 px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
+          <span className=\"text-[10px] font-medium text-slate-500 px-2 py-0.5 rounded bg-slate-900 border border-slate-800 shrink-0\">
             En Espera
           </span>
         )}
       </div>
 
-      {/* Dial / Caller Information Bar */}
-      <div className="bg-[#080c14] border border-slate-800 rounded-xl p-3 flex flex-col gap-2">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-slate-400">Prospecto Seleccionado:</span>
-          <span className="font-semibold text-amber-400">{activeCase?.leadName || 'Ninguno'}</span>
+      {/* Dial Bar */}
+      <div className=\"bg-[#080c14] border border-slate-800 rounded-xl p-2.5 sm:p-3 flex flex-col gap-1.5 min-w-0\">
+        <div className=\"flex items-center justify-between text-[11px] min-w-0\">
+          <span className=\"text-slate-400 truncate\">Lead:</span>
+          <span className=\"font-semibold text-amber-400 truncate max-w-[150px]\">{activeCase?.leadName || 'Ninguno'}</span>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className=\"flex items-center gap-2 min-w-0\">
           <input
-            type="text"
+            type=\"text\"
             value={dialNumber}
             onChange={(e) => setDialNumber(e.target.value)}
             disabled={callStatus !== 'IDLE'}
-            className="flex-1 bg-slate-900 border border-slate-800 text-white font-mono text-sm px-3 py-2 rounded-lg focus:outline-none focus:border-amber-500 transition-colors"
-            placeholder="+1 (000) 000-0000"
+            className=\"flex-1 bg-slate-900 border border-slate-800 text-white font-mono text-xs sm:text-sm px-2.5 py-1.5 rounded-lg focus:outline-none focus:border-amber-500 min-w-0\"
+            placeholder=\"+1 (000) 000-0000\"
           />
 
           {callStatus === 'IDLE' ? (
             <button
               onClick={handleStartCall}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-950/40 transition-transform active:scale-95"
+              className=\"px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs flex items-center gap-1 shadow-lg shadow-emerald-950/40 active:scale-95 shrink-0\"
             >
-              <Phone className="w-3.5 h-3.5" />
+              <Phone className=\"w-3 h-3\" />
               <span>Llamar</span>
             </button>
           ) : (
             <button
               onClick={handleEndCall}
-              className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 shadow-lg shadow-red-950/40 transition-transform active:scale-95"
+              className=\"px-3 sm:px-4 py-1.5 sm:py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs flex items-center gap-1 shadow-lg shadow-red-950/40 active:scale-95 shrink-0\"
             >
-              <PhoneOff className="w-3.5 h-3.5" />
+              <PhoneOff className=\"w-3 h-3\" />
               <span>Colgar</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Live Audio Visualizer + In-Call Controls */}
+      {/* In-Call Controls */}
       {callStatus === 'CONNECTED' && (
-        <div className="flex flex-col gap-3 pt-1 border-t border-slate-800/80">
+        <div className=\"flex flex-col gap-2.5 pt-1 border-t border-slate-800/80 min-w-0\">
           
-          {/* Real-time audio waveform animation */}
-          <div className="flex items-center justify-between bg-slate-950/80 rounded-xl px-4 py-2.5 border border-slate-800">
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-amber-400 animate-pulse" />
-              <span className="text-xs font-semibold text-slate-300">Voz Activa (Full-Duplex)</span>
+          <div className=\"flex items-center justify-between bg-slate-950/80 rounded-xl px-3 py-2 border border-slate-800 min-w-0\">
+            <div className=\"flex items-center gap-1.5 min-w-0\">
+              <Activity className=\"w-3.5 h-3.5 text-amber-400 animate-pulse shrink-0\" />
+              <span className=\"text-[11px] font-semibold text-slate-300 truncate\">Voz Activa</span>
             </div>
             
-            <div className="flex items-end gap-1 h-6">
-              <span className="w-1 bg-amber-400 rounded-full animate-wave-1" />
-              <span className="w-1 bg-amber-500 rounded-full animate-wave-2" />
-              <span className="w-1 bg-amber-300 rounded-full animate-wave-3" />
-              <span className="w-1 bg-amber-400 rounded-full animate-wave-4" />
-              <span className="w-1 bg-amber-500 rounded-full animate-wave-5" />
-              <span className="w-1 bg-amber-300 rounded-full animate-wave-2" />
-              <span className="w-1 bg-amber-400 rounded-full animate-wave-4" />
+            <div className=\"flex items-end gap-1 h-5 shrink-0\">
+              <span className=\"w-1 bg-amber-400 rounded-full animate-wave-1\" />
+              <span className=\"w-1 bg-amber-500 rounded-full animate-wave-2\" />
+              <span className=\"w-1 bg-amber-300 rounded-full animate-wave-3\" />
+              <span className=\"w-1 bg-amber-400 rounded-full animate-wave-4\" />
+              <span className=\"w-1 bg-amber-500 rounded-full animate-wave-5\" />
             </div>
           </div>
 
-          {/* Action Buttons: Mute, Hold, Warm Transfer, Live Retainer Dispatch */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            
-            {/* Mute */}
+          <div className=\"grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 min-w-0\">
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                isMuted
-                  ? 'bg-amber-950/80 border-amber-500 text-amber-300'
-                  : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
-              }`}
+              className={py-1.5 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1 transition-all }
             >
-              {isMuted ? <MicOff className="w-3.5 h-3.5 text-amber-400" /> : <Mic className="w-3.5 h-3.5 text-slate-400" />}
+              {isMuted ? <MicOff className=\"w-3 h-3 text-amber-400\" /> : <Mic className=\"w-3 h-3 text-slate-400\" />}
               <span>{isMuted ? 'Silenciado' : 'Silenciar'}</span>
             </button>
 
-            {/* Hold */}
             <button
               onClick={() => setIsOnHold(!isOnHold)}
-              className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                isOnHold
-                  ? 'bg-blue-950/80 border-blue-500 text-blue-300'
-                  : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
-              }`}
+              className={py-1.5 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1 transition-all }
             >
-              {isOnHold ? <VolumeX className="w-3.5 h-3.5 text-blue-400" /> : <Volume2 className="w-3.5 h-3.5 text-slate-400" />}
-              <span>{isOnHold ? 'En Espera' : 'Hold'}</span>
+              {isOnHold ? <VolumeX className=\"w-3 h-3 text-blue-400\" /> : <Volume2 className=\"w-3 h-3 text-slate-400\" />}
+              <span>{isOnHold ? 'Hold' : 'Pausar'}</span>
             </button>
 
-            {/* Liner: Warm Transfer to Closer */}
             {activeRole === 'LINER' && (
               <button
                 onClick={() => setShowTransferPrompt(!showTransferPrompt)}
-                className="py-2 px-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-blue-950/40"
+                className=\"py-1.5 px-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-[11px] flex items-center justify-center gap-1 shadow-md\"
               >
-                <ArrowRightLeft className="w-3.5 h-3.5" />
-                <span>Pasar a Closer</span>
+                <ArrowRightLeft className=\"w-3 h-3\" />
+                <span>Pasar</span>
               </button>
             )}
 
-            {/* Closer: Retainer Instant SMS Dispatch */}
             {activeRole === 'CLOSER' && activeCase && (
               <button
                 onClick={() => onSendRetainer(activeCase.id)}
-                className="py-2 px-3 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-950/40 active:scale-95"
+                className=\"py-1.5 px-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-[11px] flex items-center justify-center gap-1 shadow-md active:scale-95\"
               >
-                <Send className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span>Enviar Retainer SMS</span>
+                <Send className=\"w-3 h-3 stroke-[2.5]\" />
+                <span>Retainer</span>
               </button>
             )}
-
           </div>
 
-          {/* Warm Transfer Note Drawer */}
           {showTransferPrompt && (
-            <div className="bg-slate-950 p-3 rounded-xl border border-blue-500/40 flex flex-col gap-2 animate-fadeIn">
-              <label className="text-[11px] font-bold text-blue-400">Nota para el Closer / Resumen de Calificación:</label>
+            <div className=\"bg-slate-950 p-2.5 rounded-xl border border-blue-500/40 flex flex-col gap-2 min-w-0\">
+              <label className=\"text-[10px] font-bold text-blue-400 truncate\">Nota para el Closer:</label>
               <textarea
                 value={transferNotes}
                 onChange={(e) => setTransferNotes(e.target.value)}
-                placeholder="Ej. Lesión en almacén, patrón amenazó con despido, 100% calificado para firmar."
+                placeholder=\"Resumen de calificación...\"
                 rows={2}
-                className="bg-slate-900 border border-slate-800 text-xs text-white p-2 rounded-lg focus:outline-none focus:border-blue-500"
+                className=\"bg-slate-900 border border-slate-800 text-xs text-white p-2 rounded-lg focus:outline-none focus:border-blue-500 w-full\"
               />
-              <div className="flex justify-end gap-2">
+              <div className=\"flex justify-end gap-2\">
                 <button
                   onClick={() => setShowTransferPrompt(false)}
-                  className="px-2.5 py-1 text-xs text-slate-400 hover:text-white"
+                  className=\"px-2 py-1 text-xs text-slate-400\"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleExecuteTransfer}
-                  className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg flex items-center gap-1"
+                  className=\"px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg\"
                 >
-                  <ArrowRightLeft className="w-3 h-3" />
-                  <span>Transferir Llamada Ahora</span>
+                  Transferir
                 </button>
               </div>
             </div>
