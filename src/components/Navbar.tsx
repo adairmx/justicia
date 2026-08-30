@@ -64,7 +64,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="bg-slate-950 p-0.5 sm:p-1 rounded-xl border border-slate-800 hidden md:flex items-center text-xs font-semibold shrink-0">
             <button
               onClick={() => setCurrentView('ADMIN_DASHBOARD')}
-              className={lex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all }
+              className={
+                currentView === 'ADMIN_DASHBOARD'
+                  ? 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all bg-amber-600 text-white font-bold shadow-md shadow-amber-950/40'
+                  : 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-200'
+              }
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
               <span className="hidden lg:inline">Panel Central</span>
@@ -73,7 +77,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setCurrentView('AGENT_WORKSPACE')}
-              className={lex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all }
+              className={
+                currentView === 'AGENT_WORKSPACE'
+                  ? 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-bold shadow-md shadow-blue-950/40'
+                  : 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-200'
+              }
             >
               <Headphones className="w-3.5 h-3.5" />
               <span className="hidden lg:inline">Puesto de Agente</span>
@@ -82,7 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Live Operational Stats Banner (Large screens only) */}
+        {/* Live Operational Stats Banner */}
         <div className="hidden 2xl:flex items-center gap-4 px-4 py-1.5 bg-slate-900/80 border border-slate-800 rounded-xl text-xs shrink-0">
           <div className="flex items-center gap-1.5">
             <PhoneCall className="w-3.5 h-3.5 text-blue-400" />
@@ -109,37 +117,48 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Controls: Role Selector + AI Switch + New Case */}
+        {/* Controls */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
-          {/* WebSocket Status Indicator */}
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-900/60 border border-slate-800 text-[10px] sm:text-[11px] shrink-0">
-            <span className={w-2 h-2 rounded-full } />
+            <span className={isWsConnected ? 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse' : 'w-2 h-2 rounded-full bg-red-400'} />
             <span className="text-slate-400 font-mono hidden sm:inline">{isWsConnected ? 'Live' : 'Offline'}</span>
           </div>
 
-          {/* Role Switcher in Agent Workspace */}
           {currentView === 'AGENT_WORKSPACE' && (
             <div className="bg-slate-950 p-0.5 rounded-lg border border-slate-800 flex items-center text-[10px] sm:text-xs shrink-0">
               <button
                 onClick={() => setActiveRole('LINER')}
-                className={px-2 sm:px-2.5 py-1 rounded-md font-semibold transition-all }
+                className={
+                  activeRole === 'LINER'
+                    ? 'px-2 sm:px-2.5 py-1 rounded-md font-semibold transition-all bg-blue-600 text-white shadow-sm'
+                    : 'px-2 sm:px-2.5 py-1 rounded-md font-semibold transition-all text-slate-400 hover:text-slate-200'
+                }
               >
                 Liner
               </button>
               <button
                 onClick={() => setActiveRole('CLOSER')}
-                className={px-2 sm:px-2.5 py-1 rounded-md font-semibold transition-all }
+                className={
+                  activeRole === 'CLOSER'
+                    ? 'px-2 sm:px-2.5 py-1 rounded-md font-semibold transition-all bg-amber-600 text-white shadow-sm'
+                    : 'px-2 sm:px-2.5 py-1 rounded-md font-semibold transition-all text-slate-400 hover:text-slate-200'
+                }
               >
                 Closer
               </button>
             </div>
           )}
 
-          {/* AI Mode Selector */}
           <button
             onClick={onOpenAIModal}
-            className={lex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg border text-[10px] sm:text-xs font-semibold transition-all shrink-0 }
+            className={
+              aiMode === 'FULL_AUTONOMOUS'
+                ? 'flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg border text-[10px] sm:text-xs font-semibold transition-all shrink-0 bg-purple-950/60 text-purple-300 border-purple-500/50 shadow-lg shadow-purple-900/20'
+                : aiMode === 'HYBRID'
+                ? 'flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg border text-[10px] sm:text-xs font-semibold transition-all shrink-0 bg-blue-950/60 text-blue-300 border-blue-500/50'
+                : 'flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg border text-[10px] sm:text-xs font-semibold transition-all shrink-0 bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'
+            }
           >
             <Bot className="w-3.5 h-3.5 text-purple-400" />
             <span className="hidden xs:inline sm:inline">IA:</span>
@@ -149,7 +168,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Sparkles className="w-3 h-3 text-amber-400 hidden sm:inline" />
           </button>
 
-          {/* New Case Button */}
           <button
             onClick={onOpenNewCase}
             className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-lg text-[11px] sm:text-xs shadow-md shadow-amber-950/40 transition-all active:scale-95 shrink-0"

@@ -57,7 +57,7 @@ export const Softphone: React.FC<SoftphoneProps> = ({
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return ${mins.toString().padStart(2, '0')}:;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handleStartCall = () => {
@@ -95,7 +95,11 @@ export const Softphone: React.FC<SoftphoneProps> = ({
       {/* Top Header */}
       <div className="flex items-center justify-between gap-2 min-w-0">
         <div className="flex items-center gap-2 min-w-0">
-          <div className={p-1.5 rounded-lg shrink-0 }>
+          <div className={
+            callStatus === 'CONNECTED' 
+              ? 'p-1.5 rounded-lg shrink-0 bg-emerald-500/20 text-emerald-400' 
+              : 'p-1.5 rounded-lg shrink-0 bg-slate-800 text-slate-400'
+          }>
             <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
           <div className="min-w-0">
@@ -179,7 +183,11 @@ export const Softphone: React.FC<SoftphoneProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 min-w-0">
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className={py-1.5 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1 transition-all }
+              className={
+                isMuted
+                  ? 'py-1.5 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1 transition-all bg-amber-950/80 border-amber-500 text-amber-300'
+                  : 'py-1.5 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1 transition-all bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
+              }
             >
               {isMuted ? <MicOff className="w-3 h-3 text-amber-400" /> : <Mic className="w-3 h-3 text-slate-400" />}
               <span>{isMuted ? 'Silenciado' : 'Silenciar'}</span>
@@ -187,7 +195,11 @@ export const Softphone: React.FC<SoftphoneProps> = ({
 
             <button
               onClick={() => setIsOnHold(!isOnHold)}
-              className={py-1.5 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1 transition-all }
+              className={
+                isOnHold
+                  ? 'py-1.5 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1 transition-all bg-blue-950/80 border-blue-500 text-blue-300'
+                  : 'py-1.5 px-2 rounded-lg border text-[11px] font-semibold flex items-center justify-center gap-1 transition-all bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
+              }
             >
               {isOnHold ? <VolumeX className="w-3 h-3 text-blue-400" /> : <Volume2 className="w-3 h-3 text-slate-400" />}
               <span>{isOnHold ? 'Hold' : 'Pausar'}</span>

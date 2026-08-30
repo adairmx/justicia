@@ -12,9 +12,9 @@ import {
   ArrowRightLeft, 
   MessageSquare, 
   FileText, 
-  ExternalLink,
-  Flame,
-  Clock
+  ExternalLink, 
+  Flame, 
+  Clock 
 } from 'lucide-react';
 import { LegalCase, ChatMessage } from '../types';
 
@@ -50,7 +50,7 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
 
   useEffect(() => {
     if (activeCase?.id) {
-      fetch(/api/cases//messages)
+      fetch('/api/cases/' + activeCase.id + '/messages')
         .then(res => res.json())
         .then(data => setMessages(data))
         .catch(() => {});
@@ -72,7 +72,7 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
   const handleSendMessage = async () => {
     if (!newMsgText.trim() || !activeCase) return;
     try {
-      const res = await fetch(/api/cases//messages, {
+      const res = await fetch('/api/cases/' + activeCase.id + '/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -147,7 +147,13 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
           </div>
 
           {retainer && (
-            <div className={px-2.5 sm:px-3 py-1.5 rounded-xl border flex items-center gap-1.5 sm:gap-2 shrink-0 }>
+            <div className={
+              retainer.status === 'SIGNED'
+                ? 'px-2.5 sm:px-3 py-1.5 rounded-xl border flex items-center gap-1.5 sm:gap-2 shrink-0 bg-emerald-950/80 border-emerald-500 text-emerald-300'
+                : retainer.status === 'OPENED'
+                ? 'px-2.5 sm:px-3 py-1.5 rounded-xl border flex items-center gap-1.5 sm:gap-2 shrink-0 bg-amber-950/80 border-amber-500 text-amber-300 animate-pulse'
+                : 'px-2.5 sm:px-3 py-1.5 rounded-xl border flex items-center gap-1.5 sm:gap-2 shrink-0 bg-blue-950/80 border-blue-500 text-blue-300'
+            }>
               <FileSignature className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <div className="text-left">
                 <span className="text-[9px] uppercase font-bold block">Retainer</span>
@@ -160,11 +166,15 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
         </div>
       </div>
 
-      {/* Mode Tabs: Scrollable horizontally on mobile without breaking */}
+      {/* Mode Tabs */}
       <div className="flex items-center gap-1 bg-[#080c14] p-1 rounded-xl border border-slate-800 text-xs font-bold overflow-x-auto no-scrollbar min-w-0">
         <button
           onClick={() => setActiveTab('INTAKE')}
-          className={shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs }
+          className={
+            activeTab === 'INTAKE'
+              ? 'shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs bg-blue-600 text-white shadow-sm'
+              : 'shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs text-slate-400 hover:text-slate-200'
+          }
         >
           <FileText className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
           <span className="whitespace-nowrap">Intake (Liner)</span>
@@ -172,7 +182,11 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
 
         <button
           onClick={() => setActiveTab('CLOSER')}
-          className={shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs }
+          className={
+            activeTab === 'CLOSER'
+              ? 'shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs bg-amber-600 text-white shadow-sm'
+              : 'shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs text-slate-400 hover:text-slate-200'
+          }
         >
           <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 shrink-0" />
           <span className="whitespace-nowrap">Cierre (Closer)</span>
@@ -180,17 +194,25 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
 
         <button
           onClick={() => setActiveTab('CHAT')}
-          className={shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs }
+          className={
+            activeTab === 'CHAT'
+              ? 'shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs bg-slate-800 text-white shadow-sm'
+              : 'shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs text-slate-400 hover:text-slate-200'
+          }
         >
-          <MessageSquare className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+          <MessageSquare className="w-3.5 h-3.5 shrink-0" />
           <span className="whitespace-nowrap">Chat ({messages.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('NOTES')}
-          className={shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs }
+          className={
+            activeTab === 'NOTES'
+              ? 'shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs bg-slate-800 text-white shadow-sm'
+              : 'shrink-0 flex-1 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all text-[11px] sm:text-xs text-slate-400 hover:text-slate-200'
+          }
         >
-          <FileText className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+          <FileText className="w-3.5 h-3.5 shrink-0" />
           <span className="whitespace-nowrap">Notas ({activeCase.notes.length})</span>
         </button>
       </div>
@@ -209,7 +231,11 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
               </div>
               <button
                 onClick={() => onUpdateCase({ reportedToBoss: !activeCase.reportedToBoss })}
-                className={px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all }
+                className={
+                  activeCase.reportedToBoss
+                    ? 'px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all bg-emerald-950 border border-emerald-500 text-emerald-300'
+                    : 'px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all bg-red-950 border border-red-500 text-red-300'
+                }
               >
                 {activeCase.reportedToBoss ? <CheckCircle2 className="w-3 h-3 text-emerald-400" /> : <XCircle className="w-3 h-3 text-red-400" />}
                 <span>{activeCase.reportedToBoss ? 'Sí' : 'No'}</span>
@@ -224,7 +250,11 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
               </div>
               <button
                 onClick={() => onUpdateCase({ receivedMedicalCare: !activeCase.receivedMedicalCare })}
-                className={px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all }
+                className={
+                  activeCase.receivedMedicalCare
+                    ? 'px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all bg-emerald-950 border border-emerald-500 text-emerald-300'
+                    : 'px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all bg-amber-950 border border-amber-500 text-amber-300'
+                }
               >
                 {activeCase.receivedMedicalCare ? <CheckCircle2 className="w-3 h-3 text-emerald-400" /> : <Clock className="w-3 h-3 text-amber-400" />}
                 <span>{activeCase.receivedMedicalCare ? 'Sí' : 'Sin Doctor'}</span>
@@ -239,7 +269,11 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
               </div>
               <button
                 onClick={() => onUpdateCase({ hasAttorney: !activeCase.hasAttorney })}
-                className={px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all }
+                className={
+                  activeCase.hasAttorney
+                    ? 'px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all bg-red-950 border border-red-500 text-red-300'
+                    : 'px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 shrink-0 transition-all bg-emerald-950 border border-emerald-500 text-emerald-300'
+                }
               >
                 {activeCase.hasAttorney ? 'Sí (Descartar)' : 'No (Califica)'}
               </button>
@@ -342,24 +376,36 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
             {/* Retainer Tracker */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-950 p-2.5 sm:p-3 rounded-xl border border-slate-800/80 min-w-0">
               
-              <div className={lex items-center gap-2 p-2 rounded-lg min-w-0 }>
-                <CheckCircle2 className={w-3.5 h-3.5 shrink-0 } />
+              <div className={
+                retainer
+                  ? 'flex items-center gap-2 p-2 rounded-lg min-w-0 bg-blue-950/80 border border-blue-500/40 text-blue-300'
+                  : 'flex items-center gap-2 p-2 rounded-lg min-w-0 text-slate-600'
+              }>
+                <CheckCircle2 className={retainer ? 'w-3.5 h-3.5 shrink-0 text-blue-400' : 'w-3.5 h-3.5 shrink-0 text-slate-700'} />
                 <div className="min-w-0">
                   <span className="text-[10px] sm:text-[11px] font-bold block truncate">1. SMS Enviado</span>
                   <span className="text-[9px] sm:text-[10px] text-slate-400 truncate">{retainer?.sentAt ? 'Enviado al celular' : 'Pendiente'}</span>
                 </div>
               </div>
 
-              <div className={lex items-center gap-2 p-2 rounded-lg min-w-0 }>
-                <CheckCircle2 className={w-3.5 h-3.5 shrink-0 } />
+              <div className={
+                retainer?.status === 'OPENED' || retainer?.status === 'SIGNED'
+                  ? 'flex items-center gap-2 p-2 rounded-lg min-w-0 bg-amber-950/80 border border-amber-500/40 text-amber-300 animate-pulse'
+                  : 'flex items-center gap-2 p-2 rounded-lg min-w-0 text-slate-600'
+              }>
+                <CheckCircle2 className={retainer?.openedAt ? 'w-3.5 h-3.5 shrink-0 text-amber-400' : 'w-3.5 h-3.5 shrink-0 text-slate-700'} />
                 <div className="min-w-0">
                   <span className="text-[10px] sm:text-[11px] font-bold block truncate">2. Abierto</span>
                   <span className="text-[9px] sm:text-[10px] text-slate-400 truncate">{retainer?.openedAt ? 'Viendo documento' : 'Esperando apertura'}</span>
                 </div>
               </div>
 
-              <div className={lex items-center gap-2 p-2 rounded-lg min-w-0 }>
-                <CheckCircle2 className={w-3.5 h-3.5 shrink-0 } />
+              <div className={
+                retainer?.status === 'SIGNED'
+                  ? 'flex items-center gap-2 p-2 rounded-lg min-w-0 bg-emerald-950/80 border border-emerald-500 text-emerald-300'
+                  : 'flex items-center gap-2 p-2 rounded-lg min-w-0 text-slate-600'
+              }>
+                <CheckCircle2 className={retainer?.status === 'SIGNED' ? 'w-3.5 h-3.5 shrink-0 text-emerald-400' : 'w-3.5 h-3.5 shrink-0 text-slate-700'} />
                 <div className="min-w-0">
                   <span className="text-[10px] sm:text-[11px] font-bold block truncate">3. Firmado</span>
                   <span className="text-[9px] sm:text-[10px] text-slate-400 truncate">{retainer?.status === 'SIGNED' ? 'Caso Formalizado' : 'Sin firma'}</span>
@@ -406,7 +452,13 @@ export const CaseDetails: React.FC<CaseDetailsProps> = ({
               messages.map((m) => (
                 <div
                   key={m.id}
-                  className={lex flex-col max-w-[85%] rounded-xl p-2.5 text-xs }
+                  className={
+                    m.sender === 'CLIENT'
+                      ? 'flex flex-col max-w-[85%] rounded-xl p-2.5 text-xs bg-slate-800 text-slate-200 self-start border border-slate-700'
+                      : m.sender === 'SYSTEM'
+                      ? 'flex flex-col max-w-[85%] rounded-xl p-2.5 text-xs bg-amber-950/70 text-amber-200 self-center border border-amber-500/30 text-center text-[10px]'
+                      : 'flex flex-col max-w-[85%] rounded-xl p-2.5 text-xs bg-blue-600 text-white self-end shadow-md'
+                  }
                 >
                   <div className="flex items-center justify-between gap-2 text-[9px] opacity-75 mb-1">
                     <span className="font-bold truncate">{m.sender === 'CLIENT' ? activeCase.leadName : m.sender === 'SYSTEM' ? 'Sistema' : 'Agente / IA'}</span>

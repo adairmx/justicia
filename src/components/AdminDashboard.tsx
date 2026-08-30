@@ -34,7 +34,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [timeframe, setTimeframe] = useState<'TODAY' | 'WEEK' | 'MONTH' | 'ALL'>('TODAY');
   const [activeAudioCallId, setActiveAudioCallId] = useState<string | null>(null);
 
-  // Agent Performance Roster
   const agentsData = [
     {
       name: "Maria G.",
@@ -46,7 +45,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       avgHandleTime: "3m 42s",
       qualityScore: "98/100",
       status: "ONLINE",
-      commissionEarned: ""
+      commissionEarned: "$360"
     },
     {
       name: "Carlos V.",
@@ -58,7 +57,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       avgHandleTime: "4m 10s",
       qualityScore: "92/100",
       status: "IN_CALL",
-      commissionEarned: ""
+      commissionEarned: "$200"
     },
     {
       name: "Adair (Humano / Closer)",
@@ -70,7 +69,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       avgHandleTime: "8m 15s",
       qualityScore: "100/100",
       status: "ONLINE",
-      commissionEarned: ",450"
+      commissionEarned: "$3,450"
     },
     {
       name: "Adair AI Clone (Hermes 3)",
@@ -82,15 +81,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       avgHandleTime: "6m 30s",
       qualityScore: "99/100",
       status: "ACTIVE_24_7",
-      commissionEarned: ",200"
+      commissionEarned: "$7,200"
     }
   ];
 
   const employerHotspots = [
-    { name: "Amazon Logistics Warehouses", location: "Ontario / San Bernardino, CA", count: 8, avgValue: ",000" },
-    { name: "Fresh Produce Packaging Inc.", location: "Vernon / East LA, CA", count: 5, avgValue: ",000" },
-    { name: "FedEx Ground Distribution", location: "Fontana, CA", count: 4, avgValue: ",000" },
-    { name: "Target Supply Chain Centers", location: "Rialto, CA", count: 3, avgValue: ",000" }
+    { name: "Amazon Logistics Warehouses", location: "Ontario / San Bernardino, CA", count: 8, avgValue: "$65,000" },
+    { name: "Fresh Produce Packaging Inc.", location: "Vernon / East LA, CA", count: 5, avgValue: "$45,000" },
+    { name: "FedEx Ground Distribution", location: "Fontana, CA", count: 4, avgValue: "$70,000" },
+    { name: "Target Supply Chain Centers", location: "Rialto, CA", count: 3, avgValue: "$55,000" }
   ];
 
   const objectionsLog = [
@@ -120,23 +119,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </p>
         </div>
 
-        {/* Quick Actions & Agent Workspace Launcher */}
+        {/* Quick Actions */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
-          
-          {/* Timeframe Filter */}
           <div className="bg-slate-950/80 p-0.5 sm:p-1 rounded-xl border border-slate-800 flex items-center text-[11px] sm:text-xs font-semibold">
             {(['TODAY', 'WEEK', 'MONTH', 'ALL'] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTimeframe(t)}
-                className={px-2 sm:px-3 py-1 rounded-lg transition-all }
+                className={
+                  timeframe === t
+                    ? 'px-2 sm:px-3 py-1 rounded-lg transition-all bg-amber-600 text-white font-bold shadow-sm'
+                    : 'px-2 sm:px-3 py-1 rounded-lg transition-all text-slate-400 hover:text-slate-200'
+                }
               >
                 {t === 'TODAY' ? 'Hoy' : t === 'WEEK' ? 'Semana' : t === 'MONTH' ? 'Mes' : 'Todo'}
               </button>
             ))}
           </div>
 
-          {/* Jump into Agent Seat Button */}
           <button
             onClick={() => onSwitchToAgentView('CLOSER')}
             className="flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-blue-950/50 active:scale-95 transition-all"
@@ -159,7 +159,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
           <div className="mt-2 sm:mt-3 min-w-0">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white font-mono truncate">,280,000</h3>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white font-mono truncate">$1,280,000</h3>
             <div className="flex items-center gap-1 mt-1 text-[11px] sm:text-xs text-emerald-400 font-semibold truncate">
               <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">+24.5% vs semana anterior</span>
@@ -222,7 +222,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       </div>
 
-      {/* OPERATORS PERFORMANCE MATRIX (Responsive Table) */}
+      {/* OPERATORS PERFORMANCE MATRIX */}
       <div className="bg-[#0c121e] border border-slate-800/90 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl flex flex-col gap-4 min-w-0 overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-2 min-w-0">
           <div className="min-w-0">
@@ -238,7 +238,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </span>
         </div>
 
-        {/* Scrollable table container */}
         <div className="overflow-x-auto w-full border border-slate-800/80 rounded-xl">
           <table className="w-full text-left text-xs border-collapse min-w-[700px]">
             <thead>
@@ -258,7 +257,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <tr key={idx} className="hover:bg-slate-900/40 transition-colors">
                   <td className="py-3 px-3.5">
                     <div className="flex items-center gap-2.5">
-                      <div className={w-7 h-7 sm:w-8 sm:h-8 rounded-xl font-extrabold text-xs flex items-center justify-center shrink-0 }>
+                      <div className={
+                        agent.avatar === 'AI' 
+                          ? 'w-7 h-7 sm:w-8 sm:h-8 rounded-xl font-extrabold text-xs flex items-center justify-center shrink-0 bg-purple-950 text-purple-300 border border-purple-500/40 shadow-sm'
+                          : 'w-7 h-7 sm:w-8 sm:h-8 rounded-xl font-extrabold text-xs flex items-center justify-center shrink-0 bg-slate-800 text-amber-400 border border-slate-700'
+                      }>
                         {agent.avatar}
                       </div>
                       <div className="min-w-0">
@@ -269,7 +272,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </td>
 
                   <td className="py-3 px-3">
-                    <span className={px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold border shrink-0 }>
+                    <span className={
+                      agent.status === 'ONLINE' || agent.status === 'ACTIVE_24_7'
+                        ? 'px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold border shrink-0 bg-emerald-950/80 text-emerald-400 border-emerald-500/40'
+                        : 'px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold border shrink-0 bg-amber-950/80 text-amber-400 border-amber-500/40 animate-pulse'
+                    }>
                       {agent.status === 'ACTIVE_24_7' ? 'IA 24/7' : agent.status === 'IN_CALL' ? 'En Llamada' : 'Disponible'}
                     </span>
                   </td>
@@ -306,7 +313,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* TWO COLUMN GRID: EMPLOYERS HOTSPOTS & OBJECTIONS INTELLIGENCE */}
+      {/* TWO COLUMN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 min-w-0">
         
         {/* Left Box */}

@@ -89,35 +89,55 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
           />
         </div>
 
-        {/* Quick Filter Tabs: horizontal scroll on small devices */}
+        {/* Quick Filter Tabs */}
         <div className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold border-b border-slate-800/80 pb-2 overflow-x-auto no-scrollbar min-w-0">
           <button
             onClick={() => setFilter('ALL')}
-            className={px-2 py-0.5 rounded-lg transition-colors shrink-0 }
+            className={
+              filter === 'ALL'
+                ? 'px-2 py-0.5 rounded-lg transition-colors shrink-0 bg-slate-800 text-white font-bold'
+                : 'px-2 py-0.5 rounded-lg transition-colors shrink-0 text-slate-400 hover:text-slate-200'
+            }
           >
             Todos
           </button>
           <button
             onClick={() => setFilter('INTAKE')}
-            className={px-2 py-0.5 rounded-lg transition-colors shrink-0 }
+            className={
+              filter === 'INTAKE'
+                ? 'px-2 py-0.5 rounded-lg transition-colors shrink-0 bg-blue-950 text-blue-300 font-bold border border-blue-800'
+                : 'px-2 py-0.5 rounded-lg transition-colors shrink-0 text-slate-400 hover:text-slate-200'
+            }
           >
             Intake
           </button>
           <button
             onClick={() => setFilter('CLOSER')}
-            className={px-2 py-0.5 rounded-lg transition-colors shrink-0 }
+            className={
+              filter === 'CLOSER'
+                ? 'px-2 py-0.5 rounded-lg transition-colors shrink-0 bg-purple-950 text-purple-300 font-bold border border-purple-800'
+                : 'px-2 py-0.5 rounded-lg transition-colors shrink-0 text-slate-400 hover:text-slate-200'
+            }
           >
             Cierre
           </button>
           <button
             onClick={() => setFilter('RETAINER_SENT')}
-            className={px-2 py-0.5 rounded-lg transition-colors shrink-0 }
+            className={
+              filter === 'RETAINER_SENT'
+                ? 'px-2 py-0.5 rounded-lg transition-colors shrink-0 bg-amber-950 text-amber-300 font-bold border border-amber-800'
+                : 'px-2 py-0.5 rounded-lg transition-colors shrink-0 text-slate-400 hover:text-slate-200'
+            }
           >
             SMS Enviado
           </button>
           <button
             onClick={() => setFilter('SIGNED')}
-            className={px-2 py-0.5 rounded-lg transition-colors shrink-0 }
+            className={
+              filter === 'SIGNED'
+                ? 'px-2 py-0.5 rounded-lg transition-colors shrink-0 bg-emerald-950 text-emerald-300 font-bold border border-emerald-800'
+                : 'px-2 py-0.5 rounded-lg transition-colors shrink-0 text-slate-400 hover:text-slate-200'
+            }
           >
             Firmados
           </button>
@@ -137,7 +157,11 @@ export const PipelineBoard: React.FC<PipelineBoardProps> = ({
               <div
                 key={c.id}
                 onClick={() => onSelectCase(c)}
-                className={p-3 rounded-xl border cursor-pointer transition-all min-w-0 }
+                className={
+                  isSelected
+                    ? 'p-3 rounded-xl border cursor-pointer transition-all min-w-0 bg-slate-900 border-amber-500/80 shadow-lg shadow-amber-950/20 ring-1 ring-amber-500/30'
+                    : 'p-3 rounded-xl border cursor-pointer transition-all min-w-0 bg-[#090e17] border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/50'
+                }
               >
                 <div className="flex items-start justify-between gap-2 mb-1 min-w-0">
                   <div className="min-w-0">
