@@ -21,9 +21,9 @@ const initialMockCases: LegalCase[] = [
     state: "CA",
     employer: "Amazon Logistics Warehouse (San Bernardino)",
     injuryDate: "2026-08-14",
-    reportedToBoss: true;
-    receivedMedicalCare: false;
-    hasAttorney: false;
+    reportedToBoss: true,
+    receivedMedicalCare: false,
+    hasAttorney: false,
     injuryDetails: "Lesión lumbar severa (L4-L5) levantando tarima de 65 lbs en turno nocturno. Supervisor negó reporte de accidente DWC-1.",
     estimatedCaseValue: "$65,000",
     status: "FIRMA_COMPLETADA",
@@ -54,9 +54,9 @@ const initialMockCases: LegalCase[] = [
     state: "CA",
     employer: "Freelance / Rideshare Driver",
     injuryDate: "2026-08-22",
-    reportedToBoss: true;
-    receivedMedicalCare: true;
-    hasAttorney: false;
+    reportedToBoss: true,
+    receivedMedicalCare: true,
+    hasAttorney: false,
     injuryDetails: "Choque en T (T-Bone collision) en intersección en Los Angeles. Esguince cervical y fractura de muñeca.",
     estimatedCaseValue: "$120,000",
     status: "FIRMA_COMPLETADA",
@@ -87,9 +87,9 @@ const initialMockCases: LegalCase[] = [
     state: "CA",
     employer: "Fresh Produce Packaging Inc. (Vernon, CA)",
     injuryDate: "2026-08-28",
-    reportedToBoss: true;
-    receivedMedicalCare: false;
-    hasAttorney: false;
+    reportedToBoss: true,
+    receivedMedicalCare: false,
+    hasAttorney: false,
     injuryDetails: "Atrapamiento de mano derecha en banda transportadora de empaque. Laceración profunda y trauma articular.",
     estimatedCaseValue: "$85,000",
     status: "CALIFICADO_PARA_CLOSER",
@@ -111,9 +111,9 @@ const initialMockCases: LegalCase[] = [
     state: "CA",
     employer: "FedEx Ground Distribution (Fontana)",
     injuryDate: "2026-08-29",
-    reportedToBoss: true;
-    receivedMedicalCare: true;
-    hasAttorney: false;
+    reportedToBoss: true,
+    receivedMedicalCare: true,
+    hasAttorney: false,
     injuryDetails: "Caída desde plataforma de carga (altura 4 pies). Lesión en menisco de rodilla izquierda.",
     estimatedCaseValue: "$55,000",
     status: "CONTRATO_ENVIADO",
