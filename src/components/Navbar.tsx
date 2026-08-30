@@ -9,16 +9,19 @@ import {
   TrendingUp, 
   Plus,
   LayoutDashboard,
-  Headphones
+  Headphones,
+  FolderKanban
 } from 'lucide-react';
 import { Stats } from '../types';
+
+export type MainViewType = 'ADMIN_DASHBOARD' | 'CASES_LIST' | 'AGENT_WORKSPACE';
 
 interface NavbarProps {
   stats: Stats;
   activeRole: 'LINER' | 'CLOSER' | 'ADMIN';
   setActiveRole: (role: 'LINER' | 'CLOSER' | 'ADMIN') => void;
-  currentView: 'ADMIN_DASHBOARD' | 'AGENT_WORKSPACE';
-  setCurrentView: (view: 'ADMIN_DASHBOARD' | 'AGENT_WORKSPACE') => void;
+  currentView: MainViewType;
+  setCurrentView: (view: MainViewType) => void;
   aiMode: 'OFF' | 'HYBRID' | 'FULL_AUTONOMOUS';
   setAiMode: (mode: 'OFF' | 'HYBRID' | 'FULL_AUTONOMOUS') => void;
   onOpenNewCase: () => void;
@@ -43,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="bg-[#0c121e]/95 backdrop-blur-md border-b border-slate-800/80 px-3 sm:px-4 md:px-6 py-2.5 sticky top-0 z-40 w-full overflow-hidden">
       <div className="flex items-center justify-between gap-2 sm:gap-4 max-w-[1800px] mx-auto min-w-0">
         
-        {/* Brand & Main View Switcher */}
+        {/* Brand & Main 3-Tab Switcher */}
         <div className="flex items-center gap-2 sm:gap-4 min-w-0 shrink">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-900/30 ring-1 ring-amber-400/40 shrink-0">
@@ -60,32 +63,42 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Desktop Navigation Tabs */}
-          <div className="bg-slate-950 p-0.5 sm:p-1 rounded-xl border border-slate-800 hidden md:flex items-center text-xs font-semibold shrink-0">
+          {/* Desktop Navigation: 3 Distinct Sections */}
+          <div className="bg-slate-950 p-0.5 sm:p-1 rounded-xl border border-slate-800 hidden md:flex items-center text-xs font-semibold shrink-0 gap-0.5">
             <button
               onClick={() => setCurrentView('ADMIN_DASHBOARD')}
               className={
                 currentView === 'ADMIN_DASHBOARD'
-                  ? 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all bg-amber-600 text-white font-bold shadow-md shadow-amber-950/40'
-                  : 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-200'
+                  ? 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all bg-amber-600 text-white font-bold shadow-md shadow-amber-950/40'
+                  : 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-200'
               }
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">Panel Central</span>
-              <span className="lg:hidden">Admin</span>
+              <span>Métricas & Dashboard</span>
+            </button>
+
+            <button
+              onClick={() => setCurrentView('CASES_LIST')}
+              className={
+                currentView === 'CASES_LIST'
+                  ? 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all bg-amber-600 text-white font-bold shadow-md shadow-amber-950/40'
+                  : 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-200'
+              }
+            >
+              <FolderKanban className="w-3.5 h-3.5" />
+              <span>Expedientes & Casos</span>
             </button>
 
             <button
               onClick={() => setCurrentView('AGENT_WORKSPACE')}
               className={
                 currentView === 'AGENT_WORKSPACE'
-                  ? 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-bold shadow-md shadow-blue-950/40'
-                  : 'flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-200'
+                  ? 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all bg-blue-600 text-white font-bold shadow-md shadow-blue-950/40'
+                  : 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-slate-200'
               }
             >
               <Headphones className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">Puesto de Agente</span>
-              <span className="lg:hidden">Agente</span>
+              <span>Puesto de Agente</span>
             </button>
           </div>
         </div>
@@ -117,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Controls */}
+        {/* Controls: Role Switcher + AI + New Case */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-900/60 border border-slate-800 text-[10px] sm:text-[11px] shrink-0">
