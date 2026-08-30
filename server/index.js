@@ -3,10 +3,15 @@ import http from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import twilio from 'twilio';
 import { getDb, saveDb } from './db.js';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
@@ -15,6 +20,10 @@ const wss = new WebSocketServer({ server, path: '/ws' });
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve built frontend assets in production
+const distPath = path.join(__dirname, '..', 'dist');
+app.use(express.static(distPath));
 
 const PORT = process.env.PORT || 3001;
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || 'AC_MOCK_TWILIO_ACCOUNT_SID';
@@ -186,7 +195,6 @@ app.post('/api/cases/:id/retainer/send', (req, res) => {
   };
   caseItem.status = 'CONTRATO_ENVIADO';
 
-  // Add system message
   db.messages.push({
     id: `MSG-${Date.now()}`,
     caseId: caseItem.id,
@@ -206,13 +214,12 @@ app.post('/api/cases/:id/retainer/send', (req, res) => {
   res.json({ success: true, retainer: caseItem.retainer });
 });
 
-// Webhook for Retainer Signing Lifecycle (Simulate or Real)
 app.post('/api/cases/:id/retainer/status-update', (req, res) => {
   const db = getDb();
   const caseItem = db.cases.find(c => c.id === req.params.id);
   if (!caseItem || !caseItem.retainer) return res.status(404).json({ error: 'Retainer not found for this case' });
 
-  const { status } = req.body; // OPENED | SIGNED
+  const { status } = req.body;
   caseItem.retainer.status = status;
 
   if (status === 'OPENED' && !caseItem.retainer.openedAt) {
@@ -289,9 +296,8 @@ app.get('/api/stats', (req, res) => {
   res.json(db.stats);
 });
 
-// --- AI HOOKS (Ready for Vapi / Retell / Hermes) ---
+// --- AI HOOKS ---
 app.post('/api/ai/intake-webhook', (req, res) => {
-  console.log('[AI INTAKE WEBHOOK RECEIVED]', req.body);
   const db = getDb();
   const { callerPhone, leadName, injuryDetails, employer, injuryDate } = req.body;
 
@@ -337,6 +343,11 @@ app.post('/api/ai/intake-webhook', (req, res) => {
   });
 });
 
+// Fallback SPA routing for frontend in production
+app.get('*', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
 server.listen(PORT, () => {
-  console.log(`⚖️ JUSTICIA CRM Backend Engine running on http://localhost:${PORT}`);
+  console.log(`⚖️ JUSTICIA CRM Backend Engine running on port ${PORT}`);
 });
