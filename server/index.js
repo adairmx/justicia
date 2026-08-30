@@ -1,126 +1,66 @@
-import express from 'express';
-import http from 'http';
-import { WebSocketServer, WebSocket } from 'ws';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import twilio from 'twilio';
-import { getDb, saveDb } from './db.js';
-
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+﻿const express = require('express');
+const http = require('http');
+const path = require('path');
+const cors = require('cors');
+const { WebSocketServer } = require('ws');
+const { getDb, saveDb, defaultCases, defaultStats } = require('./db');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws' });
 
+const PORT = process.env.PORT || 3001;
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve built frontend assets in production
-const distPath = path.join(__dirname, '..', 'dist');
-app.use(express.static(distPath));
-
-const PORT = process.env.PORT || 3001;
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || 'AC_MOCK_TWILIO_ACCOUNT_SID';
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN || 'mock_twilio_auth_token';
-const TWILIO_API_KEY = process.env.TWILIO_API_KEY || 'SK_MOCK_TWILIO_API_KEY';
-const TWILIO_API_SECRET = process.env.TWILIO_API_SECRET || 'mock_twilio_api_secret';
-const TWILIO_TWIML_APP_SID = process.env.TWILIO_TWIML_APP_SID || 'AP_MOCK_TWIML_APP_SID';
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER || '+18005555878';
-
-// Broadcast helper for real-time WebSockets
-function broadcast(event, payload) {
-  const message = JSON.stringify({ event, payload });
+// Broadcast helper to all connected UI clients
+function broadcast(type, data) {
+  const payload = JSON.stringify({ type, data });
   wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(message);
+    if (client.readyState === 1) {
+      client.send(payload);
     }
   });
 }
 
-wss.on('connection', (ws) => {
-  console.log('[WS] Client connected to Justicia Live Engine');
-  ws.send(JSON.stringify({ event: 'CONNECTED', payload: { time: new Date().toISOString() } }));
-});
+// In-memory messages store initialized with sample omnichannel chats
+let messagesStore = {
+  "WC-8921": [
+    { id: 1, channel: "WHATSAPP", sender: "CLIENT", text: "Hola, sufrí un accidente en el almacén de Amazon y mi supervisor no me quiere dar el reporte médico.", timestamp: "2026-08-30T14:02:00Z" },
+    { id: 2, channel: "WHATSAPP", sender: "AI_AGENT", text: "Hola Carlos. Sentimos mucho lo ocurrido. En California la ley te protege al 100%. Te estamos conectando con un especialista legal ahora mismo.", timestamp: "2026-08-30T14:02:15Z" },
+    { id: 3, channel: "SMS", sender: "AGENT", text: "Carlos, te enviamos tu contrato Retainer al celular: https://justicia.legal/sign/RET-2026-8921", timestamp: "2026-08-30T14:15:00Z" },
+    { id: 4, channel: "SMS", sender: "CLIENT", text: "¡Listo! Ya lo firmé desde mi celular. ¿Qué sigue con la clínica?", timestamp: "2026-08-30T14:18:50Z" }
+  ],
+  "PI-4019": [
+    { id: 1, channel: "WEBCHAT", sender: "CLIENT", text: "I was hit by an SUV while driving for Uber. I need legal representation.", timestamp: "2026-08-30T15:05:00Z" },
+    { id: 2, channel: "WEBCHAT", sender: "AI_AGENT", text: "Hello Michael, we operate strictly on contingency (zero upfront cost). A Closer will call you right away.", timestamp: "2026-08-30T15:05:12Z" },
+    { id: 3, channel: "SMS", sender: "AGENT", text: "Retainer agreement link sent: https://justicia.legal/sign/RET-2026-4019", timestamp: "2026-08-30T15:20:00Z" }
+  ],
+  "WC-9042": [
+    { id: 1, channel: "INSTAGRAM", sender: "CLIENT", text: "Me lastimé la mano en la empacadora y tengo miedo que me corran porque no tengo papeles.", timestamp: "2026-08-30T15:50:00Z" },
+    { id: 2, channel: "INSTAGRAM", sender: "AI_AGENT", text: "Guadalupe, el estatus migratorio no afecta tu derecho a compensación ni atención médica en California. Te estamos llamando.", timestamp: "2026-08-30T15:50:30Z" }
+  ]
+};
 
-// --- TWILIO VOICE WEBRTC TOKEN ---
-app.get('/api/twilio/token', (req, res) => {
-  const identity = req.query.identity || 'agent_venezuela_1';
-  try {
-    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_API_KEY && process.env.TWILIO_API_SECRET) {
-      const AccessToken = twilio.jwt.AccessToken;
-      const VoiceGrant = AccessToken.VoiceGrant;
-      
-      const voiceGrant = new VoiceGrant({
-        outgoingApplicationSid: TWILIO_TWIML_APP_SID,
-        incomingAllow: true,
-      });
-
-      const token = new AccessToken(
-        TWILIO_ACCOUNT_SID,
-        TWILIO_API_KEY,
-        TWILIO_API_SECRET,
-        { identity }
-      );
-      token.addGrant(voiceGrant);
-      return res.json({ token: token.toJwt(), identity });
-    }
-    
-    // Dev mock token mode if credentials not yet configured
-    res.json({
-      token: `mock_jwt_token_for_${identity}`,
-      identity,
-      isMock: true,
-      message: 'Running in WebRTC Simulation Mode. Configure .env with Twilio credentials for live SIP carrier lines.'
-    });
-  } catch (err) {
-    console.error('Error generating Twilio token:', err);
-    res.status(500).json({ error: 'Failed to generate token' });
-  }
-});
-
-// --- TWIML VOICE WEBHOOK ---
-app.post('/api/twilio/voice', (req, res) => {
-  const VoiceResponse = twilio.twiml.VoiceResponse;
-  const twiml = new VoiceResponse();
-  const to = req.body.To;
-
-  if (to) {
-    const dial = twiml.dial({
-      callerId: TWILIO_PHONE_NUMBER,
-      record: 'record-from-answer',
-      recordingStatusCallback: '/api/twilio/recording-callback'
-    });
-    if (to.startsWith('client:')) {
-      dial.client(to.replace('client:', ''));
-    } else {
-      dial.number(to);
-    }
-  } else {
-    twiml.say({ language: 'es-MX' }, 'Bienvenido a Justicia. Conectando con un especialista en compensación laboral.');
-    const dial = twiml.dial();
-    dial.client('closer_queue');
-  }
-
-  res.type('text/xml');
-  res.send(twiml.toString());
-});
-
-// --- CASES API ---
+// =================== CASES REST API ===================
 app.get('/api/cases', (req, res) => {
   const db = getDb();
   res.json(db.cases);
 });
 
+app.get('/api/cases/:id', (req, res) => {
+  const db = getDb();
+  const found = db.cases.find(c => c.id === req.params.id);
+  if (!found) return res.status(404).json({ error: "Case not found" });
+  res.json(found);
+});
+
 app.post('/api/cases', (req, res) => {
   const db = getDb();
   const newCase = {
-    id: `CASE-${Date.now().toString().slice(-4)}`,
+    id: `WC-${Math.floor(1000 + Math.random() * 9000)}`,
     createdAt: new Date().toISOString(),
     status: 'NUEVO_LEAD',
     notes: [],
@@ -129,225 +69,143 @@ app.post('/api/cases', (req, res) => {
   };
   db.cases.unshift(newCase);
   saveDb(db);
-  broadcast('CASE_CREATED', newCase);
+  broadcast('NEW_CASE', newCase);
   res.status(201).json(newCase);
 });
 
-app.put('/api/cases/:id', (req, res) => {
+app.patch('/api/cases/:id', (req, res) => {
   const db = getDb();
-  const index = db.cases.findIndex(c => c.id === req.params.id);
-  if (index === -1) return res.status(404).json({ error: 'Case not found' });
+  const idx = db.cases.findIndex(c => c.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: "Case not found" });
 
-  db.cases[index] = { ...db.cases[index], ...req.body };
+  db.cases[idx] = { ...db.cases[idx], ...req.body };
   saveDb(db);
-  broadcast('CASE_UPDATED', db.cases[index]);
-  res.json(db.cases[index]);
+  broadcast('CASE_UPDATED', db.cases[idx]);
+  res.json(db.cases[idx]);
 });
 
-// --- LINER TO CLOSER WARM TRANSFER ---
-app.post('/api/cases/:id/transfer-to-closer', (req, res) => {
+// =================== STATS API ===================
+app.get('/api/stats', (req, res) => {
   const db = getDb();
-  const caseItem = db.cases.find(c => c.id === req.params.id);
-  if (!caseItem) return res.status(404).json({ error: 'Case not found' });
-
-  const { closerName, linerNotes } = req.body;
-  caseItem.status = 'EN_LLAMADA_CLOSER';
-  caseItem.assignedCloser = closerName || 'Adair (Closer/Clone)';
-  
-  if (linerNotes) {
-    caseItem.notes.push({
-      id: Date.now(),
-      author: req.body.assignedLiner || 'Liner Operator',
-      text: `[WARM TRANSFER] ${linerNotes}`,
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  saveDb(db);
-  broadcast('WARM_TRANSFER_TRIGGERED', {
-    caseId: caseItem.id,
-    leadName: caseItem.leadName,
-    closer: caseItem.assignedCloser,
-    phone: caseItem.phone,
-    notes: linerNotes
-  });
-
-  res.json({ success: true, case: caseItem });
+  res.json(db.stats || defaultStats);
 });
 
-// --- RETAINER CONTRACT DISPATCH (SMS) & LIVE SIGNING VERIFICATION ---
-app.post('/api/cases/:id/retainer/send', (req, res) => {
-  const db = getDb();
-  const caseItem = db.cases.find(c => c.id === req.params.id);
-  if (!caseItem) return res.status(404).json({ error: 'Case not found' });
-
-  const docId = `DOC-${Math.floor(10000 + Math.random() * 90000)}`;
-  const signUrl = `https://justicia.law/sign/${docId}?lead=${encodeURIComponent(caseItem.leadName)}`;
-
-  caseItem.retainer = {
-    documentId: docId,
-    status: 'SENT',
-    sentAt: new Date().toISOString(),
-    openedAt: null,
-    signedAt: null,
-    smsUrl: signUrl,
-    contingencyFeePercentage: req.body.contingencyFeePercentage || 15
-  };
-  caseItem.status = 'CONTRATO_ENVIADO';
-
-  db.messages.push({
-    id: `MSG-${Date.now()}`,
-    caseId: caseItem.id,
-    sender: 'SYSTEM',
-    channel: 'SMS',
-    text: `📄 [CONTRATO DE REPRESENTACIÓN ENVIADO] Estimado ${caseItem.leadName}, favor de abrir y firmar aquí: ${signUrl}`,
-    timestamp: new Date().toISOString()
-  });
-
-  saveDb(db);
-  broadcast('RETAINER_STATUS_CHANGED', {
-    caseId: caseItem.id,
-    retainer: caseItem.retainer,
-    leadName: caseItem.leadName
-  });
-
-  res.json({ success: true, retainer: caseItem.retainer });
-});
-
-app.post('/api/cases/:id/retainer/status-update', (req, res) => {
-  const db = getDb();
-  const caseItem = db.cases.find(c => c.id === req.params.id);
-  if (!caseItem || !caseItem.retainer) return res.status(404).json({ error: 'Retainer not found for this case' });
-
-  const { status } = req.body;
-  caseItem.retainer.status = status;
-
-  if (status === 'OPENED' && !caseItem.retainer.openedAt) {
-    caseItem.retainer.openedAt = new Date().toISOString();
-  } else if (status === 'SIGNED') {
-    caseItem.retainer.signedAt = new Date().toISOString();
-    caseItem.status = 'FIRMA_COMPLETADA';
-    db.stats.retainersSignedOnCall += 1;
-    
-    caseItem.notes.push({
-      id: Date.now(),
-      author: 'SYSTEM (SignNow/DocuSign Hook)',
-      text: `✅ Contrato de representación Retainer firmado en vivo por el cliente vía SMS. Caso formalizado.`,
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  saveDb(db);
-  broadcast('RETAINER_STATUS_CHANGED', {
-    caseId: caseItem.id,
-    retainer: caseItem.retainer,
-    leadName: caseItem.leadName
-  });
-
-  res.json({ success: true, retainer: caseItem.retainer });
-});
-
-// --- MESSAGES & CHAT ---
+// =================== OMNICHANNEL MESSAGING API ===================
 app.get('/api/cases/:id/messages', (req, res) => {
-  const db = getDb();
-  const list = db.messages.filter(m => m.caseId === req.params.id);
-  res.json(list);
+  const msgs = messagesStore[req.params.id] || [];
+  res.json(msgs);
 });
 
 app.post('/api/cases/:id/messages', (req, res) => {
-  const db = getDb();
+  const { text, channel = 'SMS', sender = 'AGENT' } = req.body;
+  if (!messagesStore[req.params.id]) {
+    messagesStore[req.params.id] = [];
+  }
   const newMsg = {
-    id: `MSG-${Date.now()}`,
-    caseId: req.params.id,
-    sender: req.body.sender || 'AGENT',
-    channel: req.body.channel || 'SMS',
-    text: req.body.text,
+    id: Date.now(),
+    channel,
+    sender,
+    text,
     timestamp: new Date().toISOString()
   };
-  db.messages.push(newMsg);
-  saveDb(db);
-  broadcast('NEW_MESSAGE', newMsg);
+  messagesStore[req.params.id].push(newMsg);
+
+  broadcast('NEW_MESSAGE', { caseId: req.params.id, message: newMsg });
   res.status(201).json(newMsg);
 });
 
-// --- CALLS & AUDIO ---
-app.get('/api/calls', (req, res) => {
-  const db = getDb();
-  res.json(db.calls);
-});
-
-app.post('/api/calls/log', (req, res) => {
-  const db = getDb();
-  const newCall = {
-    id: `CALL-${Date.now().toString().slice(-4)}`,
-    startedAt: new Date().toISOString(),
-    status: 'IN_PROGRESS',
-    ...req.body
+// INCOMING WEBHOOKS for SMS, WhatsApp, WebChat & Social Media
+app.post('/api/webhooks/incoming', (req, res) => {
+  const { caseId, from, channel = 'WHATSAPP', text } = req.body;
+  const targetId = caseId || "WC-8921";
+  
+  if (!messagesStore[targetId]) messagesStore[targetId] = [];
+  const incomingMsg = {
+    id: Date.now(),
+    channel,
+    sender: 'CLIENT',
+    text: text || "Nuevo mensaje recibido del cliente.",
+    timestamp: new Date().toISOString()
   };
-  db.calls.unshift(newCall);
-  saveDb(db);
-  broadcast('CALL_LOGGED', newCall);
-  res.status(201).json(newCall);
+  messagesStore[targetId].push(incomingMsg);
+  broadcast('NEW_MESSAGE', { caseId: targetId, message: incomingMsg });
+  res.json({ status: "received", message: incomingMsg });
 });
 
-// --- STATS ---
-app.get('/api/stats', (req, res) => {
+// =================== RETAINER CONTRACTS API ===================
+app.post('/api/retainers/:caseId/send', (req, res) => {
   const db = getDb();
-  res.json(db.stats);
-});
+  const idx = db.cases.findIndex(c => c.id === req.params.caseId);
+  if (idx === -1) return res.status(404).json({ error: "Case not found" });
 
-// --- AI HOOKS ---
-app.post('/api/ai/intake-webhook', (req, res) => {
-  const db = getDb();
-  const { callerPhone, leadName, injuryDetails, employer, injuryDate } = req.body;
-
-  const newCase = {
-    id: `CASE-${Date.now().toString().slice(-4)}`,
-    leadName: leadName || 'Prospecto WebRTC/Twilio',
-    phone: callerPhone || '+1 (000) 000-0000',
-    email: '',
-    language: 'ES',
-    state: 'CA',
-    caseType: 'Workers_Comp',
-    status: 'CALIFICADO_PARA_CLOSER',
-    assignedLiner: 'AI Intake Bot (Vapi/Retell)',
-    assignedCloser: 'Adair AI Clone',
-    injuryDate: injuryDate || new Date().toISOString().split('T')[0],
-    employer: employer || 'No especificado',
-    injuryDetails: injuryDetails || 'Calificado automáticamente por Agente de Voz IA',
-    reportedToBoss: true,
-    receivedMedicalCare: false,
-    hasAttorney: false,
-    estimatedCaseValue: '$40,000 - $80,000',
-    notes: [
-      {
-        id: Date.now(),
-        author: 'AI Intake Engine',
-        text: `Intake completado en llamada de voz por IA. Lead calificado con alta probabilidad. Transferido a Closer Queue.`,
-        timestamp: new Date().toISOString()
-      }
-    ],
-    retainer: null,
-    createdAt: new Date().toISOString()
+  const retainer = {
+    documentId: `RET-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+    sentAt: new Date().toISOString(),
+    openedAt: null,
+    signedAt: null,
+    contingencyFeePercentage: 15,
+    status: 'SENT',
+    signatureUrl: null
   };
 
-  db.cases.unshift(newCase);
+  db.cases[idx].retainer = retainer;
+  db.cases[idx].status = 'CONTRATO_ENVIADO';
   saveDb(db);
-  broadcast('AI_LEAD_QUALIFIED', newCase);
 
-  res.json({
-    status: 'QUALIFIED',
-    caseId: newCase.id,
-    nextAction: 'TRANSFER_TO_CLOSER_CLONE',
-    instructions: 'Transfer call to Adair AI Clone with in-call Retainer agreement dispatch.'
+  // Auto add dispatch message to omnichannel chat
+  if (!messagesStore[req.params.caseId]) messagesStore[req.params.caseId] = [];
+  messagesStore[req.params.caseId].push({
+    id: Date.now(),
+    channel: 'SMS',
+    sender: 'SYSTEM',
+    text: `[SISTEMA]: Contrato Retainer enviado por SMS al número ${db.cases[idx].phone}`,
+    timestamp: new Date().toISOString()
   });
+
+  broadcast('RETAINER_UPDATED', { caseId: req.params.caseId, ...retainer });
+  res.json({ success: true, retainer });
 });
 
-// Fallback SPA routing for frontend in production
+app.post('/api/retainers/:caseId/sign', (req, res) => {
+  const db = getDb();
+  const idx = db.cases.findIndex(c => c.id === req.params.caseId);
+  if (idx === -1) return res.status(404).json({ error: "Case not found" });
+
+  const { signatureDataUrl } = req.body;
+  const currentRetainer = db.cases[idx].retainer || {
+    documentId: `RET-${Date.now()}`,
+    sentAt: new Date().toISOString(),
+    contingencyFeePercentage: 15
+  };
+
+  const updatedRetainer = {
+    ...currentRetainer,
+    status: 'SIGNED',
+    signedAt: new Date().toISOString(),
+    signatureUrl: signatureDataUrl || "data:image/svg+xml;utf8,<svg>Firmado</svg>"
+  };
+
+  db.cases[idx].retainer = updatedRetainer;
+  db.cases[idx].status = 'FIRMA_COMPLETADA';
+  
+  if (db.stats) {
+    db.stats.retainersSignedOnCall = (db.stats.retainersSignedOnCall || 0) + 1;
+  }
+  saveDb(db);
+
+  broadcast('RETAINER_UPDATED', { caseId: req.params.caseId, ...updatedRetainer });
+  broadcast('STATS_UPDATED', db.stats);
+  res.json({ success: true, retainer: updatedRetainer });
+});
+
+// Serve frontend SPA in production
+const distPath = path.join(__dirname, '..', 'dist');
+app.use(express.static(distPath));
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
 server.listen(PORT, () => {
-  console.log(`⚖️ JUSTICIA CRM Backend Engine running on port ${PORT}`);
+  console.log(`JUSTICIA Server running on port ${PORT}`);
 });
