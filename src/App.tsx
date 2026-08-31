@@ -6,7 +6,6 @@ import { OmnichannelInboxView } from "./components/OmnichannelInboxView";
 import { Softphone } from "./components/Softphone";
 import { RetainerSigningModal } from "./components/RetainerSigningModal";
 import { NewCaseModal } from "./components/NewCaseModal";
-import { AIAgentControlModal } from "./components/AIAgentControlModal";
 import { LegalCase, Stats } from "./types";
 import { X, LayoutDashboard, FolderKanban, MessageSquare, PhoneCall } from "lucide-react";
 
@@ -19,29 +18,18 @@ const initialMockCases: LegalCase[] = [
     language: "ES",
     caseType: "Workers_Comp",
     state: "CA",
-    employer: "Amazon Logistics Warehouse (San Bernardino)",
+    employer: "Amazon Logistics Warehouse",
     injuryDate: "2026-08-14",
     reportedToBoss: true,
     receivedMedicalCare: false,
     hasAttorney: false,
-    injuryDetails: "Lesión lumbar severa (L4-L5) levantando tarima de 65 lbs en turno nocturno. Supervisor negó reporte de accidente DWC-1.",
+    injuryDetails: "Lesión lumbar severa (L4-L5) levantando tarima de 65 lbs.",
     estimatedCaseValue: "$65,000",
     status: "FIRMA_COMPLETADA",
-    assignedLiner: "Maria G. (Liner)",
-    assignedCloser: "Adair (Master Closer)",
-    retainer: {
-      documentId: "RET-2026-8921",
-      sentAt: "2026-08-30T14:15:00Z",
-      openedAt: "2026-08-30T14:16:30Z",
-      signedAt: "2026-08-30T14:18:45Z",
-      contingencyFeePercentage: 15,
-      status: "SIGNED",
-      signatureUrl: "data:image/svg+xml;utf8,<svg>Carlos Ramirez</svg>"
-    },
-    notes: [
-      { id: 1, author: "Maria G. (Liner)", text: "Intake calificado: Sin abogado previo, lesión en horario laboral hace 16 días.", timestamp: "2026-08-30T14:10:00Z" },
-      { id: 2, author: "Adair (Closer)", text: "Explicado Código CA § 132a anti-despido. Cliente firmó Retainer en llamada.", timestamp: "2026-08-30T14:18:45Z" }
-    ],
+    assignedLiner: "Maria G.",
+    assignedCloser: "Adair",
+    retainer: { documentId: "RET-2026-8921", sentAt: "2026-08-30T14:15:00Z", openedAt: "2026-08-30T14:16:30Z", signedAt: "2026-08-30T14:18:45Z", contingencyFeePercentage: 15, status: "SIGNED", signatureUrl: "data:image/svg+xml;utf8,<svg>Carlos Ramirez</svg>" },
+    notes: [{ id: 1, author: "Maria G.", text: "Intake calificado: Sin abogado previo, lesión en horario laboral.", timestamp: "2026-08-30T14:10:00Z" }],
     createdAt: "2026-08-30T14:05:00Z"
   },
   {
@@ -52,29 +40,18 @@ const initialMockCases: LegalCase[] = [
     language: "EN",
     caseType: "Personal_Injury",
     state: "CA",
-    employer: "Freelance / Rideshare Driver",
+    employer: "Rideshare Driver",
     injuryDate: "2026-08-22",
     reportedToBoss: true,
     receivedMedicalCare: true,
     hasAttorney: false,
-    injuryDetails: "Choque en T (T-Bone collision) en intersección en Los Angeles. Esguince cervical y fractura de muñeca.",
+    injuryDetails: "Choque en intersección en Los Angeles. Esguince cervical.",
     estimatedCaseValue: "$120,000",
     status: "FIRMA_COMPLETADA",
-    assignedLiner: "Carlos V. (Liner)",
-    assignedCloser: "Adair AI Clone (Hermes 3)",
-    retainer: {
-      documentId: "RET-2026-4019",
-      sentAt: "2026-08-30T15:20:00Z",
-      openedAt: "2026-08-30T15:21:00Z",
-      signedAt: "2026-08-30T15:23:12Z",
-      contingencyFeePercentage: 15,
-      status: "SIGNED",
-      signatureUrl: "data:image/svg+xml;utf8,<svg>Michael Johnson</svg>"
-    },
-    notes: [
-      { id: 1, author: "Carlos V. (Liner)", text: "Reporte policial disponible, contraparte 100% culpable.", timestamp: "2026-08-30T15:15:00Z" },
-      { id: 2, author: "Adair AI Clone", text: "Retainer enviado vía SMS y firmado electrónicamente en 3 minutos.", timestamp: "2026-08-30T15:23:12Z" }
-    ],
+    assignedLiner: "Carlos V.",
+    assignedCloser: "Adair",
+    retainer: { documentId: "RET-2026-4019", sentAt: "2026-08-30T15:20:00Z", openedAt: "2026-08-30T15:21:00Z", signedAt: "2026-08-30T15:23:12Z", contingencyFeePercentage: 15, status: "SIGNED", signatureUrl: "data:image/svg+xml;utf8,<svg>Michael Johnson</svg>" },
+    notes: [{ id: 1, author: "Carlos V.", text: "Reporte policial disponible, contraparte culpable.", timestamp: "2026-08-30T15:15:00Z" }],
     createdAt: "2026-08-30T15:10:00Z"
   },
   {
@@ -85,20 +62,18 @@ const initialMockCases: LegalCase[] = [
     language: "ES",
     caseType: "Workers_Comp",
     state: "CA",
-    employer: "Fresh Produce Packaging Inc. (Vernon, CA)",
+    employer: "Fresh Produce Packaging Inc.",
     injuryDate: "2026-08-28",
     reportedToBoss: true,
     receivedMedicalCare: false,
     hasAttorney: false,
-    injuryDetails: "Atrapamiento de mano derecha en banda transportadora de empaque. Laceración profunda y trauma articular.",
+    injuryDetails: "Atrapamiento de mano derecha en banda transportadora.",
     estimatedCaseValue: "$85,000",
     status: "CALIFICADO_PARA_CLOSER",
-    assignedLiner: "Maria G. (Liner)",
-    assignedCloser: "Adair (Master Closer)",
+    assignedLiner: "Maria G.",
+    assignedCloser: "Adair",
     retainer: null,
-    notes: [
-      { id: 1, author: "Maria G. (Liner)", text: "La empresa no quiso llevarla a la clínica. Muy preocupada por costos.", timestamp: "2026-08-30T16:00:00Z" }
-    ],
+    notes: [{ id: 1, author: "Maria G.", text: "Lesión confirmada, pendiente cierre.", timestamp: "2026-08-30T16:00:00Z" }],
     createdAt: "2026-08-30T15:55:00Z"
   },
   {
@@ -109,28 +84,18 @@ const initialMockCases: LegalCase[] = [
     language: "ES",
     caseType: "Workers_Comp",
     state: "CA",
-    employer: "FedEx Ground Distribution (Fontana)",
+    employer: "FedEx Ground Distribution",
     injuryDate: "2026-08-29",
     reportedToBoss: true,
     receivedMedicalCare: true,
     hasAttorney: false,
-    injuryDetails: "Caída desde plataforma de carga (altura 4 pies). Lesión en menisco de rodilla izquierda.",
+    injuryDetails: "Caída desde plataforma de carga. Lesión de rodilla.",
     estimatedCaseValue: "$55,000",
     status: "CONTRATO_ENVIADO",
-    assignedLiner: "Carlos V. (Liner)",
-    assignedCloser: "Adair (Master Closer)",
-    retainer: {
-      documentId: "RET-2026-9105",
-      sentAt: "2026-08-30T16:20:00Z",
-      openedAt: "2026-08-30T16:22:00Z",
-      signedAt: null,
-      contingencyFeePercentage: 15,
-      status: "OPENED",
-      signatureUrl: null
-    },
-    notes: [
-      { id: 1, author: "Carlos V. (Liner)", text: "Intake completo. Retainer SMS enviado mientras habla con Closer.", timestamp: "2026-08-30T16:18:00Z" }
-    ],
+    assignedLiner: "Carlos V.",
+    assignedCloser: "Adair",
+    retainer: { documentId: "RET-2026-9105", sentAt: "2026-08-30T16:20:00Z", openedAt: "2026-08-30T16:22:00Z", signedAt: null, contingencyFeePercentage: 15, status: "OPENED", signatureUrl: null },
+    notes: [{ id: 1, author: "Carlos V.", text: "Retainer SMS enviado.", timestamp: "2026-08-30T16:18:00Z" }],
     createdAt: "2026-08-30T16:15:00Z"
   }
 ];
@@ -148,10 +113,7 @@ export function App() {
   const [currentTab, setCurrentTab] = useState<MainTabType>("METRICS");
   const [isSoftphoneOpen, setIsSoftphoneOpen] = useState(false);
   const [isNewCaseOpen, setIsNewCaseOpen] = useState(false);
-  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [signingModalCase, setSigningModalCase] = useState<LegalCase | null>(null);
-  const [aiMode, setAiMode] = useState<"OFF" | "HYBRID" | "FULL_AUTONOMOUS">("FULL_AUTONOMOUS");
-  const [isWsConnected, setIsWsConnected] = useState(true);
 
   const fetchData = async () => {
     try {
@@ -161,12 +123,8 @@ export function App() {
       ]);
       const casesData = await casesRes.json();
       const statsData = await statsRes.json();
-      if (Array.isArray(casesData) && casesData.length > 0) {
-        setCases(casesData);
-      }
-      if (statsData && statsData.totalCallsToday) {
-        setStats(statsData);
-      }
+      if (Array.isArray(casesData) && casesData.length > 0) setCases(casesData);
+      if (statsData && statsData.totalCallsToday) setStats(statsData);
     } catch (err) {}
   };
 
@@ -177,9 +135,6 @@ export function App() {
     let ws: WebSocket | null = null;
     try {
       ws = new WebSocket(wsUrl);
-      ws.onopen = () => setIsWsConnected(true);
-      ws.onclose = () => setIsWsConnected(false);
-      ws.onerror = () => setIsWsConnected(false);
       ws.onmessage = (event) => {
         try {
           const msg = JSON.parse(event.data);
@@ -228,18 +183,15 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070b13] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-[#070a12] text-zinc-100 flex flex-col font-sans selection:bg-zinc-700 selection:text-white">
       <Navbar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
         onOpenSoftphoneModal={() => setIsSoftphoneOpen(true)}
         onOpenNewCase={() => setIsNewCaseOpen(true)}
-        onOpenAIModal={() => setIsAIModalOpen(true)}
-        aiMode={aiMode}
-        isWsConnected={isWsConnected}
       />
 
-      <main className="flex-1 max-w-[1800px] w-full mx-auto p-3 sm:p-5 md:p-6 overflow-hidden flex flex-col min-w-0">
+      <main className="flex-1 max-w-[1600px] w-full mx-auto p-4 sm:p-6 overflow-hidden flex flex-col min-w-0">
         {currentTab === "METRICS" && (
           <div className="flex-1 animate-fadeIn overflow-y-auto">
             <AdminDashboard cases={cases} stats={stats} onSwitchToAgentView={() => setIsSoftphoneOpen(true)} onSelectCase={() => setCurrentTab("CASES")} />
@@ -259,25 +211,24 @@ export function App() {
         )}
       </main>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0a0f1b]/95 backdrop-blur-lg border-t border-slate-800/90 py-1.5 px-3 flex items-center justify-around z-50 text-[10px] font-bold">
-        <button onClick={() => setCurrentTab("METRICS")} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl ${currentTab === "METRICS" ? "text-amber-400 bg-amber-500/10" : "text-slate-400"}`}><LayoutDashboard className="w-4 h-4" /><span>Métricas</span></button>
-        <button onClick={() => setCurrentTab("CASES")} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl ${currentTab === "CASES" ? "text-amber-400 bg-amber-500/10" : "text-slate-400"}`}><FolderKanban className="w-4 h-4" /><span>Casos</span></button>
-        <button onClick={() => setCurrentTab("INBOX")} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl ${currentTab === "INBOX" ? "text-amber-400 bg-amber-500/10" : "text-slate-400"}`}><MessageSquare className="w-4 h-4" /><span>Mensajería</span></button>
-        <button onClick={() => setIsSoftphoneOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-blue-400"><PhoneCall className="w-4 h-4" /><span>Softphone</span></button>
-      </div>
+      {/* Clean Mobile Bottom Navigation Bar (Visible ONLY on mobile, no duplicate buttons on top) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#090d16]/95 backdrop-blur-lg border-t border-zinc-800/90 py-2 px-4 flex items-center justify-around z-50 text-[11px] font-medium">
+        <button onClick={() => setCurrentTab("METRICS")} className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-colors ${currentTab === "METRICS" ? "text-zinc-100 font-semibold" : "text-zinc-500"}`}><LayoutDashboard className="w-4 h-4" /><span>Métricas</span></button>
+        <button onClick={() => setCurrentTab("CASES")} className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-colors ${currentTab === "CASES" ? "text-zinc-100 font-semibold" : "text-zinc-500"}`}><FolderKanban className="w-4 h-4" /><span>Casos</span></button>
+        <button onClick={() => setCurrentTab("INBOX")} className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-colors ${currentTab === "INBOX" ? "text-zinc-100 font-semibold" : "text-zinc-500"}`}><MessageSquare className="w-4 h-4" /><span>Mensajería</span></button>
+      </nav>
 
       {isSoftphoneOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0e1626] border border-slate-700 rounded-3xl w-full max-w-md p-5 shadow-2xl relative flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3"><h3 className="text-sm font-bold text-white uppercase tracking-wider">Acceso Directo Softphone</h3><button onClick={() => setIsSoftphoneOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"><X className="w-5 h-5" /></button></div>
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0e1422] border border-zinc-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl relative flex flex-col gap-4">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3"><h3 className="text-xs font-semibold text-zinc-200 uppercase tracking-wider">Softphone VoIP</h3><button onClick={() => setIsSoftphoneOpen(false)} className="p-1 rounded-md text-zinc-400 hover:text-white"><X className="w-4 h-4" /></button></div>
             <Softphone activeCase={cases[0] || null} activeRole="CLOSER" onTransferToCloser={() => setIsSoftphoneOpen(false)} onSendRetainer={handleSendRetainer} onLogCall={() => {}} />
           </div>
         </div>
       )}
 
       <NewCaseModal isOpen={isNewCaseOpen} onClose={() => setIsNewCaseOpen(false)} onCreateCase={(newCase) => { setCases((prev) => [newCase, ...prev]); setCurrentTab("CASES"); }} />
-      <AIAgentControlModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} aiMode={aiMode} setAiMode={setAiMode} />
-      {signingModalCase && <RetainerSigningModal caseItem={signingModalCase} isOpen={true} onClose={() => setSigningModalCase(null)} onSign={(sig) => handleSignContract(signingModalCase.id, sig)} />}
+      {signingModalCase && <RetainerSigningModal caseItem={signingModalCase} onClose={() => setSigningModalCase(null)} onConfirmSignature={(id) => handleSignContract(id, "data:image/svg+xml;utf8,<svg>Signed</svg>")} />}
     </div>
   );
 }
