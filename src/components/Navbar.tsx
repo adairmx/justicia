@@ -1,5 +1,5 @@
-﻿import React from "react";
-import { Scale, Plus, LayoutDashboard, FolderKanban, PhoneCall, MessageSquare } from "lucide-react";
+import React from "react";
+import { Scale, Plus, LayoutDashboard, FolderKanban, PhoneCall, MessageSquare, Globe } from "lucide-react";
 
 export type MainTabType = "METRICS" | "CASES" | "INBOX";
 
@@ -8,13 +8,15 @@ interface NavbarProps {
   setCurrentTab: (tab: MainTabType) => void;
   onOpenSoftphoneModal: () => void;
   onOpenNewCase: () => void;
+  onViewPublicLanding?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   setCurrentTab,
   onOpenSoftphoneModal,
-  onOpenNewCase
+  onOpenNewCase,
+  onViewPublicLanding
 }) => {
   return (
     <header className="bg-[#090d16]/95 backdrop-blur-md border-b border-zinc-800/80 px-4 sm:px-6 py-2.5 sticky top-0 z-40 w-full">
@@ -25,7 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Scale className="w-4 h-4 text-amber-400/90" />
             </div>
             <div>
-              <span className="font-bold tracking-tight text-sm text-zinc-100 font-[\x27Outfit\x27]">JUSTICIA</span>
+              <span className="font-bold tracking-tight text-sm text-zinc-100 font-['Outfit']">JUSTICIA</span>
               <span className="text-[9px] text-zinc-500 font-medium ml-1.5 hidden sm:inline">Legal Voice OS</span>
             </div>
           </div>
@@ -36,6 +38,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
         </div>
         <div className="flex items-center gap-2.5 shrink-0">
+          {onViewPublicLanding && (
+            <button
+              onClick={onViewPublicLanding}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium rounded-lg transition-colors"
+            >
+              <Globe className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline">Ver Web de Publicidad</span>
+              <span className="sm:hidden">Web</span>
+            </button>
+          )}
           <button onClick={onOpenSoftphoneModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 text-xs font-medium rounded-lg transition-colors"><PhoneCall className="w-3.5 h-3.5 text-zinc-400" /><span>Softphone</span></button>
           <button onClick={onOpenNewCase} className="flex items-center gap-1.5 px-3.5 py-1.5 bg-zinc-100 hover:bg-white text-zinc-950 font-semibold text-xs rounded-lg transition-colors shadow-sm"><Plus className="w-3.5 h-3.5 stroke-[2.5]" /><span>Nuevo Caso</span></button>
         </div>

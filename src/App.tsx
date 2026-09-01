@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, MainTabType } from "./components/Navbar";
 import { AdminDashboard } from "./components/AdminDashboard";
 import { CasesListView } from "./components/CasesListView";
@@ -6,6 +6,9 @@ import { OmnichannelInboxView } from "./components/OmnichannelInboxView";
 import { Softphone } from "./components/Softphone";
 import { RetainerSigningModal } from "./components/RetainerSigningModal";
 import { NewCaseModal } from "./components/NewCaseModal";
+import { LandingPage } from "./components/landing/LandingPage";
+import { ClassicLandingPage } from "./components/landing/ClassicLandingPage";
+import { ABTestSwitcher } from "./components/landing/ABTestSwitcher";
 import { LegalCase, Stats } from "./types";
 import { X, LayoutDashboard, FolderKanban, MessageSquare, PhoneCall } from "lucide-react";
 
@@ -101,6 +104,9 @@ const initialMockCases: LegalCase[] = [
 ];
 
 export function App() {
+  const [viewMode, setViewMode] = useState<"LANDING" | "CRM">("LANDING");
+  const [abVariant, setAbVariant] = useState<"CLASSIC_A" | "HIGH_CONVERSION_B">("HIGH_CONVERSION_B");
+  const [callMode, setCallMode] = useState<"NATIVE_PHONE" | "WEB_CALL">("NATIVE_PHONE");
   const [cases, setCases] = useState<LegalCase[]>(initialMockCases);
   const [stats, setStats] = useState<Stats>({
     totalCallsToday: 76,
@@ -182,6 +188,34 @@ export function App() {
     setSigningModalCase(null);
   };
 
+  if (viewMode === "LANDING") {
+    return (
+      <div className="relative">
+        <ABTestSwitcher
+          currentVariant={abVariant}
+          onSelectVariant={setAbVariant}
+          callMode={callMode}
+          onSelectCallMode={setCallMode}
+          onOpenCRM={() => setViewMode("CRM")}
+        />
+        {abVariant === "CLASSIC_A" ? (
+          <ClassicLandingPage
+            onOpenCRM={() => setViewMode("CRM")}
+            onLeadCaptured={(newLead) => setCases((prev) => [newLead, ...prev])}
+            onSwitchToVariantB={() => setAbVariant("HIGH_CONVERSION_B")}
+            callMode={callMode}
+          />
+        ) : (
+          <LandingPage
+            onOpenCRM={() => setViewMode("CRM")}
+            onLeadCaptured={(newLead) => setCases((prev) => [newLead, ...prev])}
+            callMode={callMode}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#070a12] text-zinc-100 flex flex-col font-sans selection:bg-zinc-700 selection:text-white">
       <Navbar
@@ -189,6 +223,7 @@ export function App() {
         setCurrentTab={setCurrentTab}
         onOpenSoftphoneModal={() => setIsSoftphoneOpen(true)}
         onOpenNewCase={() => setIsNewCaseOpen(true)}
+        onViewPublicLanding={() => setViewMode("LANDING")}
       />
 
       <main className="flex-1 max-w-[1600px] w-full mx-auto p-4 sm:p-6 overflow-hidden flex flex-col min-w-0">
@@ -211,7 +246,7 @@ export function App() {
         )}
       </main>
 
-      {/* Clean Mobile Bottom Navigation Bar (Visible ONLY on mobile, no duplicate buttons on top) */}
+      {/* Clean Mobile Bottom Navigation Bar (Visible ONLY on mobile in CRM view) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#090d16]/95 backdrop-blur-lg border-t border-zinc-800/90 py-2 px-4 flex items-center justify-around z-50 text-[11px] font-medium">
         <button onClick={() => setCurrentTab("METRICS")} className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-colors ${currentTab === "METRICS" ? "text-zinc-100 font-semibold" : "text-zinc-500"}`}><LayoutDashboard className="w-4 h-4" /><span>Métricas</span></button>
         <button onClick={() => setCurrentTab("CASES")} className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-colors ${currentTab === "CASES" ? "text-zinc-100 font-semibold" : "text-zinc-500"}`}><FolderKanban className="w-4 h-4" /><span>Casos</span></button>
@@ -220,7 +255,7 @@ export function App() {
 
       {isSoftphoneOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0e1422] border border-zinc-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl relative flex flex-col gap-4">
+          <div className="bg-[#0e1424] border border-zinc-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl relative flex flex-col gap-4">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3"><h3 className="text-xs font-semibold text-zinc-200 uppercase tracking-wider">Softphone VoIP</h3><button onClick={() => setIsSoftphoneOpen(false)} className="p-1 rounded-md text-zinc-400 hover:text-white"><X className="w-4 h-4" /></button></div>
             <Softphone activeCase={cases[0] || null} activeRole="CLOSER" onTransferToCloser={() => setIsSoftphoneOpen(false)} onSendRetainer={handleSendRetainer} onLogCall={() => {}} />
           </div>

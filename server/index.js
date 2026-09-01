@@ -1,4 +1,4 @@
-﻿import express from "express";
+import express from "express";
 import http from "http";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -59,6 +59,66 @@ app.get("/api/cases/:id", (req, res) => {
   const found = db.cases.find(c => c.id === req.params.id);
   if (!found) return res.status(404).json({ error: "Case not found" });
   res.json(found);
+});
+
+app.post("/api/leads", (req, res) => {
+  const db = getDb();
+  const {
+    leadName,
+    phone,
+    email = "",
+    caseType = "Workers_Comp",
+    state = "CA",
+    employer = "",
+    injuryDate = new Date().toISOString().split("T")[0],
+    reportedToBoss = false,
+    receivedMedicalCare = false,
+    hasAttorney = false,
+    injuryDetails = "",
+    source = "PUBLICIDAD_WEB",
+    estimatedCaseValue = "$50,000"
+  } = req.body;
+
+  const prefix = caseType === "Personal_Injury" ? "PI" : "WC";
+  const newLead = {
+    id: `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`,
+    leadName: leadName || "Lead Web",
+    phone: phone || "No proporcionado",
+    email,
+    language: "ES",
+    caseType,
+    state,
+    employer: employer || "No especificado",
+    injuryDate,
+    reportedToBoss: Boolean(reportedToBoss),
+    receivedMedicalCare: Boolean(receivedMedicalCare),
+    hasAttorney: Boolean(hasAttorney),
+    injuryDetails: injuryDetails || `Lead recibido desde Campaña Web (${source})`,
+    estimatedCaseValue: estimatedCaseValue || "$50,000",
+    status: "NUEVO_LEAD",
+    assignedLiner: "Sin Asignar (Entrante)",
+    assignedCloser: null,
+    retainer: null,
+    notes: [
+      {
+        id: 1,
+        author: "Sistema Web / Ads",
+        text: `Lead capturado desde Landing Page de Publicidad [Origen: ${source}]. Requiere llamada inmediata del Liner.`,
+        timestamp: new Date().toISOString()
+      }
+    ],
+    createdAt: new Date().toISOString()
+  };
+
+  db.cases.unshift(newLead);
+  if (db.stats) {
+    db.stats.totalCallsToday = (db.stats.totalCallsToday || 0) + 1;
+  }
+  saveDb(db);
+  broadcast("NEW_CASE", newLead);
+  if (db.stats) broadcast("STATS_UPDATED", db.stats);
+
+  res.status(201).json({ success: true, caseId: newLead.id, lead: newLead });
 });
 
 app.post("/api/cases", (req, res) => {
