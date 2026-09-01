@@ -178,7 +178,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
         </div>
       </header>
 
-      {/* 2. SUB-BARRA CON ICONO DE FACEBOOK GRANDE A LA IZQUIERDA (TAL COMO EN LA FOTO 2) */}
+      {/* 2. SUB-BARRA CON ICONO DE FACEBOOK GRANDE A LA IZQUIERDA */}
       <div className="bg-white py-3 px-6 max-w-[1240px] w-full mx-auto flex items-center justify-start">
         <a
           href="https://www.facebook.com/justicialatina"
@@ -190,7 +190,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
         </a>
       </div>
 
-      {/* 3. HERO PRINCIPAL: FONDO AZUL OSCURO NAVY (#0C2340) CON TIPOGRAFÍA EXACTA */}
+      {/* 3. HERO PRINCIPAL: FONDO AZUL OSCURO NAVY (#0C2340) */}
       <section className="bg-[#0C2340] text-white py-14 px-4 sm:px-8">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-sans">
@@ -243,7 +243,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
             </a>
           </div>
 
-          {/* Formulario Rápido Hero (Campos Blancos con Botón Verde "Evaluación gratis") */}
+          {/* Formulario Rápido Hero */}
           <div className="pt-4 max-w-3xl mx-auto">
             {heroSubmitted ? (
               <div className="p-3 bg-emerald-950/80 border border-[#22c55e] rounded-xl text-xs text-white">
@@ -276,7 +276,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
             )}
           </div>
 
-          {/* Pastillas Blancas Inferiores Redondeadas (Pills exactas: Red en IL..., Atención en español, Sin pago inicial) */}
+          {/* Pastillas Blancas Inferiores Redondeadas */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
             <span className="px-4 py-2 rounded-full bg-white text-slate-800 text-xs font-semibold shadow-sm flex items-center gap-1.5">
               Red en IL, WI, CA, NY...
@@ -291,21 +291,22 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
         </div>
       </section>
 
-      {/* 4. SECCIÓN "CONTÁCTANOS AHORA" (FONDO #0F2847 CON LOS 2 FORMULARIOS OFICIALES) */}
-      <section id="contact-section" className="py-14 px-4 sm:px-8 bg-[#0F2847] text-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white uppercase tracking-tight font-sans">
+      {/* 4. SECCIÓN "CONTÁCTANOS AHORA" - FORMULARIO ÚNICO UNIFICADO */}
+      <section id="contact-section" className="py-16 px-4 sm:px-8 bg-[#0C2340] text-white">
+        <div className="max-w-[940px] mx-auto">
+          {/* TÍTULO: "CONTÁCTANOS AHORA" */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-wider font-sans">
               CONTÁCTANOS AHORA
             </h2>
             <div className="w-16 h-1 bg-[#22c55e] mx-auto mt-2 rounded-full" />
           </div>
 
-          {/* FORMULARIO 1: ACCIDENTES DE TRABAJO */}
-          <div className="bg-[#143256] border border-[#1E4575] rounded-2xl p-6 sm:p-8 shadow-xl mb-10">
-            <div className="mb-6">
+          {/* CAJA ÚNICA DE FORMULARIO */}
+          <div className="bg-[#091a30] border border-[#1b3d69] rounded-2xl p-6 sm:p-8 shadow-2xl">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <h3 className="text-base sm:text-lg font-bold text-[#22c55e] uppercase tracking-wide">
-                DÉJANOS TUS DATOS SI SUFRISTE UN ACCIDENTE DE TRABAJO.
+                DÉJANOS TUS DATOS PARA ASESORARTE GRATIS
               </h3>
             </div>
 
@@ -318,72 +319,75 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleWorkSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-5">
-                <div className="md:col-span-6 space-y-3.5">
+              <form onSubmit={handleWorkSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                {/* Columna Izquierda: Nombre, Teléfono, Código Postal, Correo */}
+                <div className="md:col-span-6 space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Nombre *</label>
+                    <label className="block text-[11px] font-bold text-white uppercase tracking-wider mb-1.5">NOMBRE *</label>
                     <input
                       type="text"
                       required
+                      placeholder="Tu nombre completo"
                       value={workForm.nombre}
                       onChange={(e) => setWorkForm({ ...workForm, nombre: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
+                      className="w-full bg-[#061222] border border-[#1b3d69] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Número de teléfono *</label>
+                      <label className="block text-[11px] font-bold text-white uppercase tracking-wider mb-1.5">NÚMERO DE TELÉFONO *</label>
                       <input
                         type="tel"
                         required
                         placeholder="(312) 000-0000"
                         value={workForm.telefono}
                         onChange={(e) => setWorkForm({ ...workForm, telefono: e.target.value })}
-                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
+                        className="w-full bg-[#061222] border border-[#1b3d69] rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#22c55e]"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Código postal</label>
+                      <label className="block text-[11px] font-bold text-white uppercase tracking-wider mb-1.5">CÓDIGO POSTAL</label>
                       <input
                         type="text"
                         placeholder="Ej. 60629"
                         value={workForm.codigoPostal}
                         onChange={(e) => setWorkForm({ ...workForm, codigoPostal: e.target.value })}
-                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
+                        className="w-full bg-[#061222] border border-[#1b3d69] rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#22c55e]"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Correo electrónico *</label>
+                    <label className="block text-[11px] font-bold text-white uppercase tracking-wider mb-1.5">CORREO ELECTRÓNICO *</label>
                     <input
                       type="email"
                       required
                       placeholder="nombre@ejemplo.com"
                       value={workForm.email}
                       onChange={(e) => setWorkForm({ ...workForm, email: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
+                      className="w-full bg-[#061222] border border-[#1b3d69] rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
                 </div>
 
+                {/* Columna Derecha: Mensaje y Botón ENVIAR MENSAJE Verde */}
                 <div className="md:col-span-6 flex flex-col justify-between">
                   <div>
-                    <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Mensaje</label>
+                    <label className="block text-[11px] font-bold text-white uppercase tracking-wider mb-1.5">MENSAJE</label>
                     <textarea
-                      rows={5}
-                      placeholder="Cuéntanos brevemente qué ocurrió..."
+                      rows={6}
+                      placeholder="Cuéntanos brevemente qué ocurrió (trabajo, auto, etc.)..."
                       value={workForm.mensaje}
                       onChange={(e) => setWorkForm({ ...workForm, mensaje: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-[#22c55e]"
+                      className="w-full bg-[#061222] border border-[#1b3d69] rounded-lg p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#22c55e] resize-y"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={workSubmitting}
-                    className="w-full mt-4 py-3.5 bg-[#22c55e] hover:bg-[#16a34a] text-black font-black text-sm uppercase rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
+                    className="w-full mt-4 py-3 bg-[#22c55e] hover:bg-[#16a34a] text-black font-black text-sm uppercase tracking-wider rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {workSubmitting ? "ENVIANDO..." : "ENVIAR MENSAJE"}
                   </button>
@@ -391,105 +395,13 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
               </form>
             )}
           </div>
-
-          {/* FORMULARIO 2: ACCIDENTES DE AUTO */}
-          <div className="bg-[#143256] border border-[#1E4575] rounded-2xl p-6 sm:p-8 shadow-xl">
-            <div className="mb-6">
-              <h3 className="text-base sm:text-lg font-bold text-[#22c55e] uppercase tracking-wide">
-                DÉJANOS TUS DATOS SI SUFRISTE UN ACCIDENTE DE AUTO.
-              </h3>
-            </div>
-
-            {autoSubmitted ? (
-              <div className="p-6 bg-emerald-950/60 border border-[#22c55e] rounded-xl text-center space-y-2">
-                <CheckCircle className="w-10 h-10 text-[#22c55e] mx-auto" />
-                <h4 className="text-lg font-bold text-white">Su mensaje fue enviado con éxito!</h4>
-                <p className="text-xs text-zinc-200">
-                  Nos comunicaremos contigo enseguida para iniciar tu reclamo.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleAutoSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-5">
-                <div className="md:col-span-6 space-y-3.5">
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Nombre *</label>
-                    <input
-                      type="text"
-                      required
-                      value={autoForm.nombre}
-                      onChange={(e) => setAutoForm({ ...autoForm, nombre: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Número de teléfono *</label>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="(312) 000-0000"
-                        value={autoForm.telefono}
-                        onChange={(e) => setAutoForm({ ...autoForm, telefono: e.target.value })}
-                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Código postal</label>
-                      <input
-                        type="text"
-                        placeholder="Ej. 60629"
-                        value={autoForm.codigoPostal}
-                        onChange={(e) => setAutoForm({ ...autoForm, codigoPostal: e.target.value })}
-                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Correo electrónico *</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="nombre@ejemplo.com"
-                      value={autoForm.email}
-                      onChange={(e) => setAutoForm({ ...autoForm, email: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
-                    />
-                  </div>
-                </div>
-
-                <div className="md:col-span-6 flex flex-col justify-between">
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-200 uppercase mb-1">Mensaje</label>
-                    <textarea
-                      rows={5}
-                      placeholder="Cuéntanos brevemente qué ocurrió..."
-                      value={autoForm.mensaje}
-                      onChange={(e) => setAutoForm({ ...autoForm, mensaje: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-[#22c55e]"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={autoSubmitting}
-                    className="w-full mt-4 py-3.5 bg-[#22c55e] hover:bg-[#16a34a] text-black font-black text-sm uppercase rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
-                  >
-                    {autoSubmitting ? "ENVIANDO..." : "ENVIAR MENSAJE"}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
         </div>
       </section>
-
       {/* 5. SECCIÓN OFICINAS & ASESORÍA CON MAPA CHICAGO */}
       <section className="py-12 px-4 bg-[#0A1D34] border-t border-b border-[#1A385E] text-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
-            <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight font-sans">
               Dale click ☑️ y asesórate con un abogado ahora.
             </h2>
             <p className="text-xs sm:text-sm text-zinc-300 mt-1">
@@ -516,7 +428,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
               </div>
             </div>
 
-            {/* Video / Banner Promocional */}
+            {/* Banner Promocional */}
             <div className="bg-gradient-to-br from-[#143256] to-[#0A1D34] p-6 rounded-2xl border border-[#2D588D] text-center space-y-4 shadow-lg">
               <div className="w-16 h-16 rounded-full bg-[#22c55e]/20 border border-[#22c55e] text-[#22c55e] flex items-center justify-center mx-auto">
                 <Award className="w-8 h-8" />
