@@ -8,7 +8,8 @@ import { RetainerSigningModal } from "./components/RetainerSigningModal";
 import { NewCaseModal } from "./components/NewCaseModal";
 import { LandingPage } from "./components/landing/LandingPage";
 import { ClassicLandingPage } from "./components/landing/ClassicLandingPage";
-import { ABTestSwitcher } from "./components/landing/ABTestSwitcher";
+import { ExactCloneJusticiaLatina } from "./components/landing/ExactCloneJusticiaLatina";
+import { ABTestSwitcher, VariantType } from "./components/landing/ABTestSwitcher";
 import { LegalCase, Stats } from "./types";
 import { X, LayoutDashboard, FolderKanban, MessageSquare, PhoneCall } from "lucide-react";
 
@@ -105,7 +106,7 @@ const initialMockCases: LegalCase[] = [
 
 export function App() {
   const [viewMode, setViewMode] = useState<"LANDING" | "CRM">("LANDING");
-  const [abVariant, setAbVariant] = useState<"CLASSIC_A" | "HIGH_CONVERSION_B">("HIGH_CONVERSION_B");
+  const [abVariant, setAbVariant] = useState<VariantType>("EXACT_CLONE_C");
   const [callMode, setCallMode] = useState<"NATIVE_PHONE" | "WEB_CALL">("NATIVE_PHONE");
   const [cases, setCases] = useState<LegalCase[]>(initialMockCases);
   const [stats, setStats] = useState<Stats>({
@@ -198,14 +199,23 @@ export function App() {
           onSelectCallMode={setCallMode}
           onOpenCRM={() => setViewMode("CRM")}
         />
-        {abVariant === "CLASSIC_A" ? (
+        {abVariant === "EXACT_CLONE_C" && (
+          <ExactCloneJusticiaLatina
+            onOpenCRM={() => setViewMode("CRM")}
+            onLeadCaptured={(newLead) => setCases((prev) => [newLead, ...prev])}
+            onSwitchToVariantA={() => setAbVariant("HIGH_CONVERSION_A")}
+            callMode={callMode}
+          />
+        )}
+        {abVariant === "CLASSIC_B" && (
           <ClassicLandingPage
             onOpenCRM={() => setViewMode("CRM")}
             onLeadCaptured={(newLead) => setCases((prev) => [newLead, ...prev])}
-            onSwitchToVariantB={() => setAbVariant("HIGH_CONVERSION_B")}
+            onSwitchToVariantB={() => setAbVariant("EXACT_CLONE_C")}
             callMode={callMode}
           />
-        ) : (
+        )}
+        {abVariant === "HIGH_CONVERSION_A" && (
           <LandingPage
             onOpenCRM={() => setViewMode("CRM")}
             onLeadCaptured={(newLead) => setCases((prev) => [newLead, ...prev])}
