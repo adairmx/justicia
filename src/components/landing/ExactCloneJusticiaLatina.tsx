@@ -136,136 +136,127 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#0F2847] text-white font-sans flex flex-col selection:bg-[#5BB356] selection:text-white">
-      {/* 1. TOP HEADER PHONES EXACTOS (wix layout) */}
-      <div className="bg-[#0A1D34] text-white py-2 px-4 border-b border-[#1A385E]">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm font-bold gap-2">
-          <div className="flex items-center gap-2 text-zinc-300 text-xs">
-            <span>Atención en Español 24/7</span>
-            <span className="text-zinc-600">•</span>
-            <span className="text-[#5BB356]">WhatsApp: 708 698 9954</span>
+    <div className="min-h-screen bg-white text-slate-800 font-sans flex flex-col selection:bg-[#20bd5a] selection:text-white">
+      {/* 1. HEADER EXACTO 1:1 (FONDO BLANCO, LOGO CON ÁGUILA, ENLACES COLORIDOS Y NÚMEROS A LA DERECHA) */}
+      <header className="bg-white border-b border-slate-200 py-3 px-4 sm:px-8 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-[1240px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          {/* Logo Original con Águila Roja/Azul y Texto "Justicia Latina" */}
+          <div className="flex items-center gap-3">
+            <img
+              src="https://static.wixstatic.com/media/914ef2_f3eee807a163473481ff0efce96d3f60%7Emv2.png/v1/fill/w_180%2Ch_180%2Clg_1%2Cusm_0.66_1.00_0.01/914ef2_f3eee807a163473481ff0efce96d3f60%7Emv2.png"
+              alt="Logo Justicia Latina"
+              className="h-16 w-auto object-contain shrink-0"
+            />
+            <span className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight font-sans">
+              Justicia Latina
+            </span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs sm:text-sm">
-            <a href="tel:+13129894525" className="text-white hover:text-[#5BB356] underline flex items-center gap-1 font-bold">
+          {/* Menú de Navegación con Colores Exactos del Sitio Wix */}
+          <nav className="flex flex-wrap items-center justify-center gap-5 sm:gap-7 text-xs sm:text-sm font-semibold tracking-normal">
+            <span className="text-[#3bb33b] font-bold cursor-pointer hover:underline">PRINCIPAL</span>
+            <span className="text-[#99d5f3] font-bold cursor-pointer hover:underline">INFORMATE</span>
+            <span className="text-[#43c443] font-bold cursor-pointer hover:underline">ASESORATE GRATIS</span>
+            <span className="text-[#3bb33b] font-bold cursor-pointer hover:underline">Blog</span>
+            
+            {/* Teléfonos a la Derecha con Enlace Subrayado */}
+            <a href="tel:+13129894525" className="text-slate-900 hover:text-blue-900 font-bold underline whitespace-nowrap">
               IL. (312) 989-4525
             </a>
-            <span className="text-zinc-600">|</span>
-            <a href="tel:+18447448339" className="text-white hover:text-[#5BB356] underline flex items-center gap-1 font-bold">
+            <a href="tel:+18447448339" className="text-slate-900 hover:text-blue-900 font-bold underline whitespace-nowrap">
               Otros estados (844) 744-8339
             </a>
-            <span className="text-zinc-600">|</span>
+
             <button
               onClick={onOpenCRM}
               title="Acceso Staff / CRM de Operaciones"
-              className="text-[11px] text-zinc-400 hover:text-white flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-slate-700 flex items-center gap-1 p-1 rounded hover:bg-slate-100"
             >
               <LogIn className="w-3.5 h-3.5" />
-              <span>CRM</span>
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. NAVBAR EXACTO: LOGO + MENÚ DE 4 ENLACES + FACEBOOK */}
-      <header className="bg-[#0F2847] border-b border-[#1B3B63] py-4 px-4 sticky top-0 z-30 shadow-md">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          {/* Logo con Águila y Tipografía Oficial */}
-          <div className="flex items-center gap-3">
-            <div className="w-14 h-14 bg-[#0A1D34] border border-[#2D588D] rounded-xl flex items-center justify-center text-[#5BB356] shadow-md p-2">
-              <Scale className="w-8 h-8 stroke-[2.2]" />
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-black tracking-tight text-white font-serif uppercase leading-none">
-                JUSTICIA <span className="text-[#5BB356]">LATINA</span>
-              </div>
-              <div className="text-[10px] text-zinc-300 font-bold tracking-widest uppercase mt-1">
-                ENLACE MÉDICO Y LEGAL
-              </div>
-            </div>
-          </div>
-
-          {/* Menú de Navegación Exacto */}
-          <nav className="flex items-center gap-5 sm:gap-7 text-xs font-black uppercase tracking-wider">
-            <span className="text-[#5BB356] border-b-2 border-[#5BB356] pb-1 cursor-pointer">PRINCIPAL</span>
-            <span className="text-white hover:text-[#5BB356] transition-colors cursor-pointer">INFORMATE</span>
-            <span className="text-[#5BB356] hover:text-[#7ce276] transition-colors cursor-pointer">ASESORATE GRATIS</span>
-            <span className="text-[#5BB356] hover:text-[#7ce276] transition-colors cursor-pointer">BLOG</span>
-            <a
-              href="https://www.facebook.com/justicialatina"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white hover:text-[#5BB356] transition-colors ml-2"
-            >
-              <Facebook className="w-4 h-4 fill-white hover:fill-[#5BB356]" />
-            </a>
           </nav>
         </div>
       </header>
 
-      {/* 3. HERO PRINCIPAL: "¿Tuviste un accidente de trabajo o de auto?" */}
-      <section className="bg-gradient-to-b from-[#0F2847] via-[#112d50] to-[#0F2847] py-12 px-4 border-b border-[#1A385E]">
-        <div className="max-w-4xl mx-auto text-center space-y-5">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-serif leading-tight">
+      {/* 2. SUB-BARRA CON ICONO DE FACEBOOK GRANDE A LA IZQUIERDA (TAL COMO EN LA FOTO 2) */}
+      <div className="bg-white py-3 px-6 max-w-[1240px] w-full mx-auto flex items-center justify-start">
+        <a
+          href="https://www.facebook.com/justicialatina"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-black hover:text-blue-600 transition-colors ml-4 sm:ml-12"
+        >
+          <Facebook className="w-8 h-8 fill-black" />
+        </a>
+      </div>
+
+      {/* 3. HERO PRINCIPAL: FONDO AZUL OSCURO NAVY (#0C2340) CON TIPOGRAFÍA EXACTA */}
+      <section className="bg-[#0C2340] text-white py-14 px-4 sm:px-8">
+        <div className="max-w-4xl mx-auto text-center space-y-4">
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-sans">
             ¿Tuviste un accidente de trabajo o de auto?
           </h1>
-          <p className="text-sm sm:text-base text-zinc-200 max-w-2xl mx-auto leading-relaxed">
-            Conectamos hispanos con abogados y doctores en tu estado. Consulta gratis en español, 24/7. <strong className="text-[#5BB356]">Si no ganas, no pagas.</strong>
+          <p className="text-sm sm:text-base text-slate-200 max-w-3xl mx-auto font-normal leading-relaxed">
+            Conectamos hispanos con <strong>abogados y doctores</strong> en tu estado. Consulta <strong>gratis</strong> en español, 24/7. <em>Si no ganas, no pagas.</em>
           </p>
 
-          {/* Botones de Acción Inmediata Hero */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          {/* Botones Redondeados Exactos con sus Colores Oficiales */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
             <a
               href="https://wa.me/17086989954?text=Hola,%20necesito%20asesoria%20legal%20por%20un%20accidente."
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-3 rounded-full bg-[#5BB356] hover:bg-[#4ea249] text-white font-extrabold text-xs uppercase shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+              className="px-5 py-3 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-black font-extrabold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
-              <MessageSquare className="w-4 h-4" />
               <span>WhatsApp ahora</span>
             </a>
 
             {callMode === "WEB_CALL" ? (
               <button
                 onClick={() => setIsWebCallOpen(true)}
-                className="px-5 py-3 rounded-full bg-[#0A1D34] hover:bg-[#15345a] text-[#5BB356] border border-[#5BB356] font-extrabold text-xs uppercase shadow-lg flex items-center gap-2 cursor-pointer transition-transform hover:scale-105"
+                className="px-5 py-3 rounded-lg bg-[#18365d] hover:bg-[#1e4474] text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 border border-slate-700 cursor-pointer"
               >
-                <Globe className="w-4 h-4 animate-spin" />
+                <Globe className="w-4 h-4 animate-spin text-[#22c55e]" />
                 <span>Llamar Online VoIP</span>
               </button>
             ) : (
               <a
                 href="tel:+13129894525"
-                className="px-5 py-3 rounded-full bg-[#0A1D34] hover:bg-[#15345a] text-white border border-[#2D588D] font-extrabold text-xs uppercase shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+                className="px-5 py-3 rounded-lg bg-[#18365d] hover:bg-[#1e4474] text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 border border-slate-700"
               >
-                <Phone className="w-4 h-4 text-[#5BB356]" />
                 <span>Llamar IL 24/7</span>
               </a>
             )}
 
             <a
               href="tel:+18447448339"
-              className="px-5 py-3 rounded-full bg-[#0A1D34] hover:bg-[#15345a] text-white border border-[#2D588D] font-extrabold text-xs uppercase shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
+              className="px-5 py-3 rounded-lg bg-[#18365d] hover:bg-[#1e4474] text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 border border-slate-700"
             >
-              <Phone className="w-4 h-4 text-[#5BB356]" />
               <span>Llamar otros estados</span>
+            </a>
+
+            <a
+              href="#contact-section"
+              className="text-xs sm:text-sm text-white underline font-semibold hover:text-[#22c55e] ml-1"
+            >
+              Agendar llamada
             </a>
           </div>
 
-          {/* Formulario Rápido de 1 Paso en Hero */}
-          <div className="pt-4 max-w-xl mx-auto">
+          {/* Formulario Rápido Hero (Campos Blancos con Botón Verde "Evaluación gratis") */}
+          <div className="pt-4 max-w-3xl mx-auto">
             {heroSubmitted ? (
-              <div className="p-3 bg-emerald-950/80 border border-[#5BB356] rounded-xl text-xs text-white">
+              <div className="p-3 bg-emerald-950/80 border border-[#22c55e] rounded-xl text-xs text-white">
                 ¡Gracias! Nos pondremos en contacto contigo de inmediato.
               </div>
             ) : (
-              <form onSubmit={handleHeroSubmit} className="flex flex-col sm:flex-row gap-2 bg-[#0A1D34] p-2 rounded-2xl border border-[#2D588D] shadow-xl">
+              <form onSubmit={handleHeroSubmit} className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
                   placeholder="Tu nombre"
                   value={heroName}
                   onChange={(e) => setHeroName(e.target.value)}
-                  className="flex-1 bg-[#143256] border border-[#2D588D] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#5BB356]"
+                  className="flex-1 bg-white text-slate-900 placeholder-slate-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] shadow-sm"
                 />
                 <input
                   type="tel"
@@ -273,11 +264,11 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                   placeholder="Tu teléfono"
                   value={heroPhone}
                   onChange={(e) => setHeroPhone(e.target.value)}
-                  className="flex-1 bg-[#143256] border border-[#2D588D] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#5BB356]"
+                  className="flex-1 bg-white text-slate-900 placeholder-slate-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] shadow-sm"
                 />
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-[#5BB356] hover:bg-[#4ea249] text-white font-black text-xs uppercase shadow-md transition-colors cursor-pointer shrink-0"
+                  className="px-6 py-3 rounded-xl bg-[#22c55e] hover:bg-[#16a34a] text-black font-extrabold text-sm shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0"
                 >
                   Evaluación gratis
                 </button>
@@ -285,36 +276,42 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
             )}
           </div>
 
-          {/* Sellos de Confianza Inferiores Hero */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-zinc-300 pt-2">
-            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-[#5BB356]" /> Red en IL, WI, CA, NY...</span>
-            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-[#5BB356]" /> Atención en español</span>
-            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-[#5BB356]" /> Sin pago inicial</span>
+          {/* Pastillas Blancas Inferiores Redondeadas (Pills exactas: Red en IL..., Atención en español, Sin pago inicial) */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
+            <span className="px-4 py-2 rounded-full bg-white text-slate-800 text-xs font-semibold shadow-sm flex items-center gap-1.5">
+              Red en IL, WI, CA, NY...
+            </span>
+            <span className="px-4 py-2 rounded-full bg-white text-slate-800 text-xs font-semibold shadow-sm flex items-center gap-1.5">
+              Atención en español
+            </span>
+            <span className="px-4 py-2 rounded-full bg-white text-slate-800 text-xs font-semibold shadow-sm flex items-center gap-1.5">
+              Sin pago inicial
+            </span>
           </div>
         </div>
       </section>
 
-      {/* 4. SECCIÓN "CONTÁCTANOS AHORA" - FORMULARIOS EXACTOS DE TRABAJO Y AUTO */}
-      <section className="py-12 px-4 bg-[#0F2847]">
-        <div className="max-w-6xl mx-auto">
+      {/* 4. SECCIÓN "CONTÁCTANOS AHORA" (FONDO #0F2847 CON LOS 2 FORMULARIOS OFICIALES) */}
+      <section id="contact-section" className="py-14 px-4 sm:px-8 bg-[#0F2847] text-white">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tight font-serif">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white uppercase tracking-tight font-sans">
               CONTÁCTANOS AHORA
             </h2>
-            <div className="w-20 h-1 bg-[#5BB356] mx-auto mt-3 rounded-full" />
+            <div className="w-16 h-1 bg-[#22c55e] mx-auto mt-2 rounded-full" />
           </div>
 
           {/* FORMULARIO 1: ACCIDENTES DE TRABAJO */}
           <div className="bg-[#143256] border border-[#1E4575] rounded-2xl p-6 sm:p-8 shadow-xl mb-10">
-            <div className="text-center sm:text-left mb-6">
-              <h3 className="text-lg sm:text-xl font-extrabold text-[#5BB356] uppercase tracking-wide">
+            <div className="mb-6">
+              <h3 className="text-base sm:text-lg font-bold text-[#22c55e] uppercase tracking-wide">
                 DÉJANOS TUS DATOS SI SUFRISTE UN ACCIDENTE DE TRABAJO.
               </h3>
             </div>
 
             {workSubmitted ? (
-              <div className="p-6 bg-emerald-950/60 border border-[#5BB356] rounded-xl text-center space-y-2">
-                <CheckCircle className="w-10 h-10 text-[#5BB356] mx-auto" />
+              <div className="p-6 bg-emerald-950/60 border border-[#22c55e] rounded-xl text-center space-y-2">
+                <CheckCircle className="w-10 h-10 text-[#22c55e] mx-auto" />
                 <h4 className="text-lg font-bold text-white">Tu mensaje fue enviado con éxito</h4>
                 <p className="text-xs text-zinc-200">
                   Un asesor legal y médico de <strong>Justicia Latina</strong> te contactará en breve al teléfono indicado.
@@ -330,7 +327,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                       required
                       value={workForm.nombre}
                       onChange={(e) => setWorkForm({ ...workForm, nombre: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
 
@@ -343,7 +340,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                         placeholder="(312) 000-0000"
                         value={workForm.telefono}
                         onChange={(e) => setWorkForm({ ...workForm, telefono: e.target.value })}
-                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                       />
                     </div>
                     <div>
@@ -353,7 +350,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                         placeholder="Ej. 60629"
                         value={workForm.codigoPostal}
                         onChange={(e) => setWorkForm({ ...workForm, codigoPostal: e.target.value })}
-                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                       />
                     </div>
                   </div>
@@ -366,7 +363,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                       placeholder="nombre@ejemplo.com"
                       value={workForm.email}
                       onChange={(e) => setWorkForm({ ...workForm, email: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
                 </div>
@@ -379,14 +376,14 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                       placeholder="Cuéntanos brevemente qué ocurrió..."
                       value={workForm.mensaje}
                       onChange={(e) => setWorkForm({ ...workForm, mensaje: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={workSubmitting}
-                    className="w-full mt-4 py-3.5 bg-[#5BB356] hover:bg-[#4ea249] text-white font-black text-sm uppercase rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
+                    className="w-full mt-4 py-3.5 bg-[#22c55e] hover:bg-[#16a34a] text-black font-black text-sm uppercase rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {workSubmitting ? "ENVIANDO..." : "ENVIAR MENSAJE"}
                   </button>
@@ -397,15 +394,15 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
 
           {/* FORMULARIO 2: ACCIDENTES DE AUTO */}
           <div className="bg-[#143256] border border-[#1E4575] rounded-2xl p-6 sm:p-8 shadow-xl">
-            <div className="text-center sm:text-left mb-6">
-              <h3 className="text-lg sm:text-xl font-extrabold text-[#5BB356] uppercase tracking-wide">
+            <div className="mb-6">
+              <h3 className="text-base sm:text-lg font-bold text-[#22c55e] uppercase tracking-wide">
                 DÉJANOS TUS DATOS SI SUFRISTE UN ACCIDENTE DE AUTO.
               </h3>
             </div>
 
             {autoSubmitted ? (
-              <div className="p-6 bg-emerald-950/60 border border-[#5BB356] rounded-xl text-center space-y-2">
-                <CheckCircle className="w-10 h-10 text-[#5BB356] mx-auto" />
+              <div className="p-6 bg-emerald-950/60 border border-[#22c55e] rounded-xl text-center space-y-2">
+                <CheckCircle className="w-10 h-10 text-[#22c55e] mx-auto" />
                 <h4 className="text-lg font-bold text-white">Su mensaje fue enviado con éxito!</h4>
                 <p className="text-xs text-zinc-200">
                   Nos comunicaremos contigo enseguida para iniciar tu reclamo.
@@ -421,7 +418,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                       required
                       value={autoForm.nombre}
                       onChange={(e) => setAutoForm({ ...autoForm, nombre: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
 
@@ -434,7 +431,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                         placeholder="(312) 000-0000"
                         value={autoForm.telefono}
                         onChange={(e) => setAutoForm({ ...autoForm, telefono: e.target.value })}
-                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                       />
                     </div>
                     <div>
@@ -444,7 +441,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                         placeholder="Ej. 60629"
                         value={autoForm.codigoPostal}
                         onChange={(e) => setAutoForm({ ...autoForm, codigoPostal: e.target.value })}
-                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                        className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                       />
                     </div>
                   </div>
@@ -457,7 +454,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                       placeholder="nombre@ejemplo.com"
                       value={autoForm.email}
                       onChange={(e) => setAutoForm({ ...autoForm, email: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
                 </div>
@@ -470,14 +467,14 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                       placeholder="Cuéntanos brevemente qué ocurrió..."
                       value={autoForm.mensaje}
                       onChange={(e) => setAutoForm({ ...autoForm, mensaje: e.target.value })}
-                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#5BB356]"
+                      className="w-full bg-[#0A1D34] border border-[#2D588D] rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={autoSubmitting}
-                    className="w-full mt-4 py-3.5 bg-[#5BB356] hover:bg-[#4ea249] text-white font-black text-sm uppercase rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
+                    className="w-full mt-4 py-3.5 bg-[#22c55e] hover:bg-[#16a34a] text-black font-black text-sm uppercase rounded-lg shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {autoSubmitting ? "ENVIANDO..." : "ENVIAR MENSAJE"}
                   </button>
@@ -489,14 +486,14 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
       </section>
 
       {/* 5. SECCIÓN OFICINAS & ASESORÍA CON MAPA CHICAGO */}
-      <section className="py-12 px-4 bg-[#0A1D34] border-t border-b border-[#1A385E]">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-12 px-4 bg-[#0A1D34] border-t border-b border-[#1A385E] text-white">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
               Dale click ☑️ y asesórate con un abogado ahora.
             </h2>
             <p className="text-xs sm:text-sm text-zinc-300 mt-1">
-              Estas son algunas de nuestras oficinas, llámanos GRATIS con cualquíer duda.
+              Estas son algunas de nuestras oficinas, llámanos GRATIS con cualquier duda.
             </p>
           </div>
 
@@ -504,7 +501,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
             {/* Mapa Chicago */}
             <div className="bg-[#143256] p-4 rounded-2xl border border-[#2D588D] shadow-lg">
               <div className="flex items-center justify-between mb-3 text-xs">
-                <span className="font-bold text-[#5BB356] flex items-center gap-1.5">
+                <span className="font-bold text-[#22c55e] flex items-center gap-1.5">
                   <MapPin className="w-4 h-4" /> Cobertura Chicago y Suburbios
                 </span>
                 <span className="text-[10px] text-zinc-400">4048 W 63rd St, Chicago</span>
@@ -513,7 +510,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                 <MapPin className="w-10 h-10 text-red-400 animate-bounce mb-2" />
                 <div className="text-sm font-bold text-white">Oficina Principal Chicago</div>
                 <div className="text-xs text-zinc-300 mt-1">4048 W 63rd St, Chicago, IL 60629</div>
-                <div className="text-[11px] text-[#5BB356] font-semibold mt-2">
+                <div className="text-[11px] text-[#22c55e] font-semibold mt-2">
                   *Debes llamar al 312-989-4525 para una cita previa
                 </div>
               </div>
@@ -521,10 +518,10 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
 
             {/* Video / Banner Promocional */}
             <div className="bg-gradient-to-br from-[#143256] to-[#0A1D34] p-6 rounded-2xl border border-[#2D588D] text-center space-y-4 shadow-lg">
-              <div className="w-16 h-16 rounded-full bg-[#5BB356]/20 border border-[#5BB356] text-[#5BB356] flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 rounded-full bg-[#22c55e]/20 border border-[#22c55e] text-[#22c55e] flex items-center justify-center mx-auto">
                 <Award className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-white uppercase font-serif">
+              <h3 className="text-lg font-bold text-white uppercase font-sans">
                 Línea Directa de Asesoría Legal
               </h3>
               <p className="text-xs text-zinc-300 leading-relaxed">
@@ -532,7 +529,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
               </p>
               <div className="p-3 bg-[#0A1D34] rounded-xl border border-[#1E4575]">
                 <div className="text-[10px] text-zinc-400 uppercase">Llama al número en pantalla:</div>
-                <div className="text-2xl font-black text-[#5BB356] tracking-wider mt-0.5">(312) 989-4525</div>
+                <div className="text-2xl font-black text-[#22c55e] tracking-wider mt-0.5">(312) 989-4525</div>
               </div>
             </div>
           </div>
@@ -546,7 +543,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
             Más de 15 años asistiendo a la comunidad latina de Estados Unidos en caso de accidentes o lesiones laborales, accidentes de auto y demás tipos de accidentes.
           </p>
 
-          <h2 className="text-3xl sm:text-4xl font-black text-[#0F2847] uppercase font-serif tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-black text-[#0F2847] uppercase font-sans tracking-tight">
             ¡Asesoría Legal GRATIS AHORA!
           </h2>
 
@@ -564,7 +561,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
           <div className="pt-2">
             <a
               href="tel:+13129894525"
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#5BB356] hover:bg-[#4ea249] text-white font-black text-sm uppercase rounded-full shadow-lg transition-transform hover:scale-105"
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#22c55e] hover:bg-[#16a34a] text-black font-black text-sm uppercase rounded-full shadow-lg transition-transform hover:scale-105"
             >
               <Phone className="w-4 h-4" />
               <span>LLÁMANOS AHORA 📳 (312) 989-4525</span>
@@ -574,13 +571,13 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
       </section>
 
       {/* 7. PROCESO EN 4 PASOS ("¿Qué hace Justicia Latina por tí?") */}
-      <section className="py-14 px-4 bg-[#0F2847] border-t border-[#1E4575]">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-14 px-4 bg-[#0F2847] border-t border-[#1E4575] text-white">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#5BB356] uppercase tracking-tight font-serif">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#22c55e] uppercase tracking-tight font-sans">
               ¿Qué hace Justicia Latina por tí?
             </h2>
-            <div className="w-16 h-1 bg-[#5BB356] mx-auto mt-2 rounded-full" />
+            <div className="w-16 h-1 bg-[#22c55e] mx-auto mt-2 rounded-full" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -619,11 +616,11 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
         </div>
       </section>
 
-      {/* 8. SECCIÓN EQUIPO EXACTA ("CONOCE QUIENES SOMOS") (FONDO #F2F4F7) */}
+      {/* 8. SECCIÓN EQUIPO EXACTA CON FOTOS REALES WIX */}
       <section className="py-16 px-4 bg-[#F2F4F7] text-[#0F2847]">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#5BB356] uppercase tracking-tight font-serif">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#22c55e] uppercase tracking-tight font-sans">
               CONOCE QUIENES SOMOS
             </h2>
             <p className="text-xs sm:text-sm text-slate-700 mt-1">
@@ -653,7 +650,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
                 </div>
                 <div className="p-3">
                   <div className="font-extrabold text-sm text-[#0F2847]">{member.name}</div>
-                  <div className="text-[11px] text-[#5BB356] font-semibold">{member.role}</div>
+                  <div className="text-[11px] text-[#22c55e] font-semibold">{member.role}</div>
                 </div>
               </div>
             ))}
@@ -673,8 +670,8 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
         </div>
       </section>
 
-      {/* 9. SECCIÓN INFORMATIVA MÉDICA Y LEGAL (#0F2847) */}
-      <section className="py-14 px-4 bg-[#0F2847] border-t border-[#1E4575]">
+      {/* 9. SECCIÓN INFORMATIVA MÉDICA Y LEGAL */}
+      <section className="py-14 px-4 bg-[#0F2847] border-t border-[#1E4575] text-white">
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-4 rounded-2xl overflow-hidden shadow-xl border border-[#2D588D] bg-[#143256]">
             <img
@@ -686,7 +683,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
           </div>
 
           <div className="md:col-span-8 space-y-4">
-            <h2 className="text-xl sm:text-2xl font-black text-[#5BB356] uppercase font-serif">
+            <h2 className="text-xl sm:text-2xl font-black text-[#22c55e] uppercase font-sans">
               Nuestro grupo de profesionales están a tu servicio.
             </h2>
             <div className="p-5 bg-[#0A1D34] rounded-xl border border-[#1E4575] space-y-2 text-xs leading-relaxed text-zinc-300">
@@ -706,7 +703,7 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
 
       {/* 10. FOOTER EXACTO DE JUSTICIA LATINA */}
       <footer className="bg-[#F2F4F7] text-[#0F2847] text-[11px] py-8 px-4 border-t border-slate-300 mt-auto">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <div>
             <div className="font-extrabold uppercase text-xs">
               ALL RIGHTS RESERVED by Justicia Latina LLC a marketing and advertising company for medical and legal field.
@@ -721,13 +718,19 @@ export const ExactCloneJusticiaLatina: React.FC<ExactCloneProps> = ({
               href="https://www.facebook.com/justicialatina"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 rounded-full bg-[#0F2847] text-white flex items-center justify-center hover:bg-[#5BB356] transition-colors"
+              className="w-8 h-8 rounded-full bg-[#0F2847] text-white flex items-center justify-center hover:bg-[#22c55e] transition-colors"
             >
               <Facebook className="w-4 h-4 fill-white" />
             </a>
           </div>
         </div>
       </footer>
+
+      {/* Widget Flotante Exacto "HOLA! ¿Cómo estás?" en la esquina inferior derecha */}
+      <div className="fixed bottom-4 right-4 z-40 bg-[#162740] hover:bg-[#1f385c] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 border border-slate-700 cursor-pointer">
+        <span className="text-base">😊</span>
+        <span>HOLA! ¿Cómo estás?</span>
+      </div>
 
       {/* Web Call In-Browser Modal */}
       <WebCallModal
