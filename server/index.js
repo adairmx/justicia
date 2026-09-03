@@ -210,6 +210,30 @@ app.post("/api/retainers/:caseId/sign", (req, res) => {
   res.json({ success: true, retainer: updatedRetainer });
 });
 
+app.post("/api/cases/:id/retainer/status-update", (req, res) => {
+  const db = getDb();
+  const idx = db.cases.findIndex(c => c.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: "Case not found" });
+  const { status = "SIGNED", signatureDataUrl } = req.body;
+  const currentRetainer = db.cases[idx].retainer || { documentId: `RET-${Date.now()}`, sentAt: new Date().toISOString(), contingencyFeePercentage: 15 };
+  const updatedRetainer = {
+    ...currentRetainer,
+    status,
+    signedAt: status === "SIGNED" ? new Date().toISOString() : currentRetainer.signedAt,
+    signatureUrl: signatureDataUrl || currentRetainer.signatureUrl || "data:image/svg+xml;utf8,<svg>Firmado</svg>"
+  };
+  db.cases[idx].retainer = updatedRetainer;
+  if (status === "SIGNED") {
+    db.cases[idx].status = "FIRMA_COMPLETADA";
+    if (db.stats) { db.stats.retainersSignedOnCall = (db.stats.retainersSignedOnCall || 0) + 1; }
+  }
+  saveDb(db);
+  broadcast("RETAINER_UPDATED", { caseId: req.params.id, ...updatedRetainer });
+  broadcast("CASE_UPDATED", db.cases[idx]);
+  if (db.stats) broadcast("STATS_UPDATED", db.stats);
+  res.json({ success: true, retainer: updatedRetainer, case: db.cases[idx] });
+});
+
 const distPath = path.join(__dirname, "..", "dist");
 app.use(express.static(distPath));
 app.get("*", (req, res) => {
