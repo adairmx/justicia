@@ -124,6 +124,9 @@ export const WebCallModal: React.FC<WebCallModalProps> = ({ isOpen, onClose, onL
             <form onSubmit={handleStartCallWithPhone} className="w-full space-y-3 pt-2">
               <input
                 type="tel"
+                name="phone"
+                autoComplete="tel"
+                inputMode="tel"
                 required
                 autoFocus
                 placeholder="(312) 000-0000"
