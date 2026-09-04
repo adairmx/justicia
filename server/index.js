@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import { WebSocketServer } from "ws";
 import { getDb, saveDb, defaultCases, defaultStats } from "./db.js";
+import twilioRoutes from "./twilioRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +19,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/api/voice", twilioRoutes);
 
 function broadcast(type, data) {
   const payload = JSON.stringify({ type, data });

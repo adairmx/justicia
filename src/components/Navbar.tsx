@@ -1,7 +1,7 @@
 import React from "react";
 import { Scale, Plus, LayoutDashboard, FolderKanban, PhoneCall, MessageSquare, Globe } from "lucide-react";
 
-export type MainTabType = "METRICS" | "CASES" | "INBOX";
+export type MainTabType = "METRICS" | "LIVE_CALLS" | "CASES" | "INBOX";
 
 interface NavbarProps {
   currentTab: MainTabType;
@@ -33,6 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <nav className="hidden md:flex items-center bg-zinc-900/90 p-1 rounded-lg border border-zinc-800/80 text-xs font-medium gap-1">
             <button onClick={() => setCurrentTab("METRICS")} className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${currentTab === "METRICS" ? "bg-zinc-800 text-zinc-100 font-semibold shadow-sm border border-zinc-700/50" : "text-zinc-400 hover:text-zinc-200"}`}><LayoutDashboard className="w-3.5 h-3.5" /><span>Métricas</span></button>
+            <button onClick={() => setCurrentTab("LIVE_CALLS")} className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${currentTab === "LIVE_CALLS" ? "bg-zinc-800 text-amber-300 font-semibold shadow-sm border border-amber-500/40" : "text-zinc-400 hover:text-zinc-200"}`}><PhoneCall className="w-3.5 h-3.5 text-amber-400" /><span>Llamadas en Vivo</span><span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /></button>
             <button onClick={() => setCurrentTab("CASES")} className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${currentTab === "CASES" ? "bg-zinc-800 text-zinc-100 font-semibold shadow-sm border border-zinc-700/50" : "text-zinc-400 hover:text-zinc-200"}`}><FolderKanban className="w-3.5 h-3.5" /><span>Casos</span></button>
             <button onClick={() => setCurrentTab("INBOX")} className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${currentTab === "INBOX" ? "bg-zinc-800 text-zinc-100 font-semibold shadow-sm border border-zinc-700/50" : "text-zinc-400 hover:text-zinc-200"}`}><MessageSquare className="w-3.5 h-3.5" /><span>Mensajería</span></button>
           </nav>

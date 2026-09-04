@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navbar, MainTabType } from "./components/Navbar";
 import { AdminDashboard } from "./components/AdminDashboard";
+import { LiveCallMonitorView } from "./components/LiveCallMonitorView";
 import { CasesListView } from "./components/CasesListView";
 import { OmnichannelInboxView } from "./components/OmnichannelInboxView";
 import { Softphone } from "./components/Softphone";
@@ -240,6 +241,12 @@ export function App() {
         {currentTab === "METRICS" && (
           <div className="flex-1 animate-fadeIn overflow-y-auto">
             <AdminDashboard cases={cases} stats={stats} onSwitchToAgentView={() => setIsSoftphoneOpen(true)} onSelectCase={() => setCurrentTab("CASES")} />
+          </div>
+        )}
+
+        {currentTab === "LIVE_CALLS" && (
+          <div className="flex-1 animate-fadeIn overflow-y-auto">
+            <LiveCallMonitorView />
           </div>
         )}
 

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Phone, 
   PhoneOff, 
@@ -205,25 +205,26 @@ export const Softphone: React.FC<SoftphoneProps> = ({
               <span>{isOnHold ? 'Hold' : 'Pausar'}</span>
             </button>
 
-            {activeRole === 'LINER' && (
+            {/* Retainer Direct 1-Click for ANY role - Rule: Todos firman Retainer */}
+            {activeCase && (
               <button
-                onClick={() => setShowTransferPrompt(!showTransferPrompt)}
-                className="py-1.5 px-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-[11px] flex items-center justify-center gap-1 shadow-md"
+                onClick={() => onSendRetainer(activeCase.id)}
+                className="py-1.5 px-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-[11px] flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all"
+                title="Enviar contrato Retainer por SMS al cliente de inmediato"
               >
-                <ArrowRightLeft className="w-3 h-3" />
-                <span>Pasar</span>
+                <Send className="w-3 h-3 stroke-[2.5]" />
+                <span>Retainer SMS</span>
               </button>
             )}
 
-            {activeRole === 'CLOSER' && activeCase && (
-              <button
-                onClick={() => onSendRetainer(activeCase.id)}
-                className="py-1.5 px-2 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-[11px] flex items-center justify-center gap-1 shadow-md active:scale-95"
-              >
-                <Send className="w-3 h-3 stroke-[2.5]" />
-                <span>Retainer</span>
-              </button>
-            )}
+            {/* Transfer Call button */}
+            <button
+              onClick={() => setShowTransferPrompt(!showTransferPrompt)}
+              className="py-1.5 px-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-[11px] flex items-center justify-center gap-1 shadow-md"
+            >
+              <ArrowRightLeft className="w-3 h-3" />
+              <span>Transferir</span>
+            </button>
           </div>
 
           {showTransferPrompt && (
